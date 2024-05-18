@@ -13,7 +13,7 @@ csm_create_parameter(
 )
 }
 \arguments{
-\item{name}{a length-one character vector name of a variabl}
+\item{name}{a length-one character vector name of a variable}
 
 \item{units}{a length-one character vector of the units of
 the CSM variable}

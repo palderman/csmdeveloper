@@ -1,10 +1,12 @@
 #' Create a cropping systems model (CSM) variable
 #'
-#' @param name a length-one character vector name of a variabl
+#' @param name a length-one character vector name of a variable
 #' @param definintion a length-one character vector that defines
 #'   the CSM variable
 #' @param units a length-one character vector of the units of
 #'   the CSM variable
+#'
+#' @export
 #'
 csm_create_variable <- function(name, definition, units){
 
