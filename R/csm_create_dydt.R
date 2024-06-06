@@ -22,7 +22,7 @@ csm_create_dydt <- function(
     state,
     arg_names = c(state = "y"),
     ...,
-    output_type = c("Rfunction", "Rcode"),
+    output_type = c("Rfunction", "Rcode", "deSolve"),
     comment_char = "#",
     line_end = "",
     v_types = c(scalar = "",
@@ -34,7 +34,7 @@ csm_create_dydt <- function(
 
   state_type <- get_v_type(state)
 
-  if(output_type %in% c("Rfunction", "Rcode")){
+  if(output_type %in% c("Rfunction", "Rcode", "deSolve")){
     dstate_dt <- paste0("d", arg_names["state"], "_dt = ",
                         "vector(\"numeric\", length(", arg_names["state"], "))",
                         line_end)
@@ -57,7 +57,11 @@ csm_create_dydt <- function(
   dydt_args <- paste0(c(state_arg, dots_args),
                       collapse = ", ")
 
-  dydt_signature <- paste0("function(", dydt_args, ")")
+  if(output_type == "deSolve"){
+    dydt_signature <- paste0("function(t, ", dydt_args, ")")
+  }else{
+    dydt_signature <- paste0("function(", dydt_args, ")")
+  }
 
   dydt_state <-
     c(code_comment("State variables:", comment_char),
@@ -110,7 +114,7 @@ csm_create_dydt <- function(
     ""
   )
 
-  if(output_type == "Rfunction"){
+  if(output_type %in% c("Rfunction", "deSolve")){
     dydt_output <-
       parse(text = dydt_output) |>
       eval()
@@ -258,6 +262,8 @@ code_return <- function(return_variable,
                         output_type){
   if(output_type %in% c("Rfunction", "Rcode")){
     return_code <- paste0("return(", return_variable, ")")
+  }else if(output_type == "deSolve"){
+    return_code <- paste0("return(list(", return_variable, "))")
   }else{
     return_code <- return_variable
   }
