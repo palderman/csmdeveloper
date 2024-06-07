@@ -10,7 +10,7 @@ csm_create_dydt(
   state,
   arg_names = c(state = "y"),
   ...,
-  output_type = c("Rfunction", "Rcode"),
+  output_type = c("Rfunction", "Rcode", "deSolve"),
   comment_char = "#",
   line_end = "",
   v_types = c(scalar = "", vector = "")

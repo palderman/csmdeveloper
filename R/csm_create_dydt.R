@@ -133,13 +133,22 @@ dydt_declaration <- function(.i, .name,
   }else{
     .in_ind <- ""
   }
-  c(
+  label <-
     code_comment(paste0(.name, ": ",
            .var,
            " (", attr(.var, "units"), ")"),
-           .comment_char),
-    paste0(.var_type, " ", .name, " = ", .in, .in_ind, .line_end)
-  )
+           .comment_char)
+  if(! is.null(attr(.var, "equation")) &
+     ! "csm_state" %in% class(.var)){
+    definition <-
+      paste0(.var_type, " ", .name, " = ",
+             attr(.var, "equation")[2], .line_end)
+  }else{
+    definition <-
+      paste0(.var_type, " ", .name, " = ",
+             .in, .in_ind, .line_end)
+  }
+  c(label, definition)
 }
 
 dydt_rate_eqs <- function(.i, .state, .state_name, .line_end = ""){
