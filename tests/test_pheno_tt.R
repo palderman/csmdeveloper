@@ -1,9 +1,13 @@
 library(tinytest)
-library(deSolve)
 
 ###########################################
 # Phenology Thermal Time Model Test Example
 ###########################################
+
+generate_Tair <- function(doy = NULL){
+  if(is.null(doy)) doy <- 1:365
+  15*cos((doy-200)/365*2*pi)+15
+}
 
 get_at_t_linear <- function(x, t){
   i = floor(t) + 1  # plus 1 because t=0 at index=1
@@ -21,6 +25,11 @@ mod_arr <- function(Tt, ko, H, E, To){
   R <- 8.314
   ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))
 }
+
+csmdeveloper::load_to_global_env(
+  c("get_at_t_linear",
+    "mod_arr")
+)
 
 # Initial conditions
 state <- c(du = 0)
@@ -44,7 +53,7 @@ pheno_tt_ref_dt <- function(t, state, parms, wth){
 
 # Generate air temperature forcings
 wth <-
-  matrix(rnorm(100, mean = parameters["To"], sd = 5),
+  matrix(generate_Tair(c(300:365,1:180)),
          ncol = 1)
 
 # Check mod_arr()
@@ -81,7 +90,7 @@ expect_equal(
 )
 
 # Specify times at which to report output
-times <- seq(0, 100, by = 0.01)
+times <- seq(0, nrow(wth)-1, by = 0.01)
 
 # Create list of integration methods to test:
 integ_list <- c("euler", "rk4")
@@ -91,7 +100,7 @@ pheno_tt_ref_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    ode(
+    deSolve::ode(
       y = state,
       times = times,
       func = pheno_tt_ref_dt,
@@ -134,11 +143,9 @@ pheno_tt_dydt <-
   csmdeveloper::csm_create_dydt(
     name = "pheno_tt",
     state = sp_state,
-    parameters = sp_parameters,
+    parms = sp_parameters,
     wth = sp_wth,
-    arg_names = c(state = "state",
-                  parameters = "parms",
-                  wth = "wth"),
+    fill_in_names = TRUE,
     output_type = "deSolve")
 
 # Run integration
@@ -146,7 +153,7 @@ pheno_tt_dydt_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    ode(
+    deSolve::ode(
       y = state,
       times = times,
       func = pheno_tt_dydt,
@@ -163,3 +170,5 @@ for(integ_method in integ_list){
     info = integ_method
   )
 }
+
+csmdeveloper::cleanup_global_env()

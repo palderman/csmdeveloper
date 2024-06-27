@@ -4,35 +4,53 @@
 #' @md
 #'
 #' @param name name of the resulting function
-#' @param states a list vector containing CSM state
+#' @param state a list vector containing CSM state
 #'   variables defined using [csmdeveloper::csm_create_state()]
 #'   in the intended order
-#' @param arg_names a named character vector whose elements
-#'   correspond to the argument name in the function to be
-#'   generated and whose names correspond to either `states`
-#'   or the name of the argument in `...`
 #' @param ... optional arguments of list vectors containing
 #'   CSM parameters defined using [csmdeveloper::csm_create_parameter()]
 #'   or CSM variables defined using [csmdeveloper::csm_create_variable()]
+#' @param arg_names an optional named character vector whose elements
+#'   correspond to the argument name in the function to be
+#'   generated and whose names correspond to either `state`
+#'   or the name of the argument in `...`
+#' @param fill_in_names a TRUE/FALSE value indicating
+#'   whether to fill in default argument names (e.g. arg_2)
+#'   for variables in `...` that are not specified in
+#'   `arg_names`
+#' @param output_type a character value indicating the
+#'   type of output to produce
+#' @param comment_char a character value indicating
+#'   which character to use as a prefix to comments
+#'   in the generated code
+#' @param line_end a character value indicating which
+#'   character(s) to indicate the end of a line of
+#'   source code
+#' @param v_types a named character vector indicating
+#'   the names of the variable types for scalars and
+#'   vectors in the target output language
 #'
 #' @export
 #'
 csm_create_dydt <- function(
     name,
     state,
-    arg_names = c(state = "y"),
     ...,
+    arg_names = NULL,
+    fill_in_names = FALSE,
     output_type = c("Rfunction", "Rcode", "deSolve"),
     comment_char = "#",
     line_end = "",
     v_types = c(scalar = "",
-                vector = "")) {
+                vector = "")){
 
   output_type <- match.arg(output_type)
 
   dots_list <- list(...)
 
   state_type <- get_v_type(state)
+
+  if(is.null(arg_names)) arg_names <- c(state = "state")
 
   if(output_type %in% c("Rfunction", "Rcode", "deSolve")){
     dstate_dt <- paste0("d", arg_names["state"], "_dt = ",
@@ -49,7 +67,7 @@ csm_create_dydt <- function(
   }
 
   if(length(dots_list) > 0){
-    dots_args <- get_dots_args(dots_list, arg_names)
+    dots_args <- get_dots_args(dots_list, arg_names, fill_in_names)
   }else{
     dots_args <- NULL
   }
@@ -156,7 +174,7 @@ dydt_rate_eqs <- function(.i, .state, .state_name, .line_end = ""){
          attr(.state, "equation")[2], .line_end)
 }
 
-get_dots_args <- function(dots_list, arg_names, v_types = NULL){
+get_dots_args <- function(dots_list, arg_names, fill_in_names, v_types = NULL){
 
   dots_type <-
     dots_list |>
@@ -169,6 +187,11 @@ get_dots_args <- function(dots_list, arg_names, v_types = NULL){
            .v_list = dots_list,
            arg_names = arg_names) |>
     unlist()
+
+  if(!fill_in_names){
+    dots_type <- dots_type[dots_list %in% arg_names]
+    dots_name <- dots_name[dots_list %in% arg_names]
+  }
 
   dots_args <-
     paste0(dots_type, " ", dots_name)
@@ -192,7 +215,9 @@ get_arg_name <- function(.i, .v_list, arg_names){
   if(names(.v_list)[.i] %in% names(arg_names)){
     .arg_name <- arg_names[names(.v_list)[.i]]
   }else{
-    .arg_name <- paste0("arg_", .i)
+    # .arg_name <- paste0("arg_", .i)
+    # Switch to using name as given in call to csm_create_dydt()
+    .arg_name <- names(.v_list)[.i]
   }
   return(.arg_name)
 }
