@@ -41,11 +41,11 @@ parameters <-
     H = 136000,
     E = 95000,
     To = 20,
-    vreq = 42,
     kv = 1,
     Hv = 830000,
     Ev = 700000,
-    Vo = 4
+    Vo = 4,
+    vreq = 42
   )
 
 # Rate equation function
@@ -134,18 +134,27 @@ sp_state <- csmdeveloper::csm_create_state(
                  "cumulative vernalization"),
   units = c("physiological days",
             "vernalization days"),
-  expression(~fv*mod_arr(Tt, ko, H, E, To),
+  expression(~fv*mod_arr(Tair, ko, H, E, To),
              ~mod_arr(Tair, kv, Hv, Ev, Vo)))
 
 # Define parameters
 sp_parameters <- csmdeveloper::csm_create_parameter(
-  c("ko", "H", "E", "To"),
-  definition = c("relative reaction rate",
-                 "deactivation energy",
-                 "activation energy",
-                 "optimum temperature"),
+  c("ko", "H", "E", "To", "kv", "Hv", "Ev", "Vo", "vreq"),
+  definition = c("relative reaction rate at optimum temperature for primary temperature response",
+                 "deactivation energy for primary temperature response",
+                 "activation energy for primary temperature response",
+                 "optimum temperature for primary temperature response",
+                 "relative reaction rate at optimum temperature for vernalization temperature response",
+                 "deactivation energy for vernalization temperature response",
+                 "activation energy for vernalization temperature response",
+                 "optimum temperature for vernalization temperature response",
+                 "vernalization requirement"
+  ),
   units = c("unitless", "Joules per mole",
-            "Joules  per mole", "degrees Celcius"))
+            "Joules  per mole", "degrees Celcius",
+            "unitless", "Joules per mole",
+            "Joules  per mole", "degrees Celcius",
+            "vernalization days"))
 
 # Define weather inputs
 sp_wth <- csmdeveloper::csm_create_transform(
@@ -166,13 +175,12 @@ pheno_vrn_dydt <-
   csmdeveloper::csm_create_dydt(
     name = "pheno_vrn",
     state = sp_state,
-    parameters = sp_parameters,
+    parms = sp_parameters,
     wth = sp_wth,
     intermediate_factors = sp_factors,
-    arg_names = c(state = "state",
-                  parameters = "parms",
-                  wth = "wth",
-                  intermediate_factors = ""),
+    arg_names = c("state",
+                  "parms",
+                  "wth"),
     output_type = "deSolve")
 
 # Run integration

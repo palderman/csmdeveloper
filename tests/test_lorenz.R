@@ -1,5 +1,4 @@
 library(tinytest)
-library(deSolve)
 
 #############################
 # Lorenz Test Example
@@ -38,7 +37,7 @@ Lorenz_ref_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    ode(
+    deSolve::ode(
       y = state,
       times = times,
       func = Lorenz_ref_dt,
@@ -71,8 +70,7 @@ Lorenz_dydt <-
   csmdeveloper::csm_create_dydt(
     name = "lorenz",
     state = lorenz_state,
-    parameters = lorenz_parameters,
-    arg_names = c(state = "state", parameters = "parms"),
+    parms = lorenz_parameters,
     output_type = "deSolve"
   )
 
@@ -81,7 +79,7 @@ Lorenz_dydt_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    ode(
+    deSolve::ode(
       y = state,
       times = times,
       func = Lorenz_dydt,

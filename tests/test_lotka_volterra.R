@@ -74,8 +74,7 @@ lotka_volt_dydt <-
   csmdeveloper::csm_create_dydt(
     name = "lotka_volterra",
     state = lv_state,
-    parameters = lv_parameters,
-    arg_names = c(state = "state", parameters = "parms"),
+    parms = lv_parameters,
     output_type = "deSolve")
 
 # Run integration

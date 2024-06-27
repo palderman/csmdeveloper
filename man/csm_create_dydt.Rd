@@ -10,7 +10,6 @@ csm_create_dydt(
   state,
   ...,
   arg_names = NULL,
-  fill_in_names = FALSE,
   output_type = c("Rfunction", "Rcode", "deSolve"),
   comment_char = "#",
   line_end = "",
@@ -28,15 +27,10 @@ in the intended order}
 CSM parameters defined using \code{\link[=csm_create_parameter]{csm_create_parameter()}}
 or CSM variables defined using \code{\link[=csm_create_variable]{csm_create_variable()}}}
 
-\item{arg_names}{an optional named character vector whose elements
-correspond to the argument name in the function to be
-generated and whose names correspond to either \code{state}
-or the name of the argument in \code{...}}
-
-\item{fill_in_names}{a TRUE/FALSE value indicating
-whether to fill in default argument names (e.g. arg_2)
-for variables in \code{...} that are not specified in
-\code{arg_names}}
+\item{arg_names}{an optional character vector whose
+elements give the names of variables in \code{...} for which
+to add an argument to the generated function. By default
+arguments will be added for all variables in \code{...}.}
 
 \item{output_type}{a character value indicating the
 type of output to produce}
