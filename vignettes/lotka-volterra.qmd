@@ -1,0 +1,110 @@
+---
+title: "Lotka-Volterra"
+format: 
+  html:
+    html-math-method: mathjax
+vignette: >
+  %\VignetteIndexEntry{Lotka-Volterra}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Define the model
+
+## Load the `csmdeveloper` package
+
+```{r}
+library(csmdeveloper)
+```
+
+## Define the state variables
+
+```{r}
+lv_state <- c(
+  csm_create_state(
+    name = "x",
+    definition = "prey",
+    units = "rabbits per square km",
+    equation = ~alpha*x-beta*x*y),
+  csm_create_state(
+    name = "y",
+    definition = "predator",
+    units = "foxes per square km",
+    equation = ~delta*x*y-gamma*y)
+)
+```
+
+## Define the parameters
+
+```{r}
+lv_parameters <- c(
+  csm_create_parameter(
+    name = "alpha",
+    definition = "maximum prey per capita growth rate",
+    units = "rabbits per rabbit"),
+  csm_create_parameter(
+    name = "beta",
+    definition = "effect of predator population on prey death rate",
+    units = "per fox"),
+  csm_create_parameter(
+    name = "gamma",
+    definition = "predator per capita death rate",
+    units = "foxes per fox"),
+  csm_create_parameter(
+    name = "delta",
+    definition = "effect of prey population on predator growth rate",
+    units = "foxes per rabbit")
+)
+```
+
+## Create the function for rate of change of state variables
+
+```{r}
+lotka_volterra_dydt <-
+  csmdeveloper::csm_create_dydt(
+    name = "lotka_volterra",
+    state = lv_state,
+    parms = lv_parameters,
+    output_type = "deSolve")
+```
+
+# Simulate system dynamics
+
+## Define initial conditions
+
+```{r}
+# Initial conditions
+state <- c(x = 10,
+           y = 10)
+```
+
+## Define parameter values for simulation
+
+```{r}
+parameters <-
+  c(alpha = 1.1,
+    beta = 0.4,
+    gamma = 0.1,
+    delta = 0.4)
+```
+
+## Define time points at which to report system state
+
+```{r}
+times <- seq(0, 100, by = 0.01)
+```
+
+## Integrate model using `deSolve` package
+
+```{r}
+# Run integration using 4th-order Runge-Kutta ("rk4")
+lotka_volterra_dydt_out <-
+  deSolve::ode(
+    y = state,
+    times = times,
+    func = lotka_volterra_dydt,
+    parms = parameters,
+    method = "rk4"
+  )
+```
+
