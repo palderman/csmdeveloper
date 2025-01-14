@@ -13,12 +13,14 @@ csm_create_variable <- function(name, definition, units){
   stopifnot(length(name) == length(definition))
   stopifnot(length(name) == length(units))
 
-  variable <- mapply(\(.def, .unit){
+  variable <- mapply(\(.name, .def, .unit){
       .var <- .def
+      attr(.var, "name") <- .name
       attr(.var, "units") <- .unit
       class(.var) <- c(class(.var), "csm_variable")
       return(.var)
     },
+    .name = name,
     .def = definition,
     .unit = units,
     SIMPLIFY = FALSE
@@ -35,3 +37,4 @@ csm_create_variable <- function(name, definition, units){
 #          \(.x) attr(.x, "units")) |>
 #     unlist()
 # }
+

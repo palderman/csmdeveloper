@@ -1,3 +1,74 @@
+#' Determine if object is state variable
+#'
+#' @export
+#'
+#' @param x any R object
+#'
+is_state_variable <- function(x){
+  "csm_state" %in% class(x)
+}
+
+#' Determine if object is a model input
+#'
+#' @export
+#'
+#' @param x any R object
+#'
+is_input <- function(x){
+  "csm_variable" %in% class(x) &
+    ! any(c("csm_state", "csm_parameter", "csm_transform") %in% class(x))
+}
+
+#' Determine if object is a model parameter
+#'
+#' @export
+#'
+#' @param x any R object
+#'
+is_parameter <- function(x){
+  "csm_parameter" %in% class(x)
+}
+
+#' Determine if object is a transformed variable
+#'
+#' @export
+#'
+#' @param x any R object
+#'
+is_transform <- function(x){
+  "csm_transform" %in% class(x)
+}
+
+#' Determine if object is a data structure
+#'
+#' @export
+#'
+#' @param x any R object
+#'
+is_data_structure <- function(x){
+  "csm_data_structure" %in% class(x)
+}
+
+subset_with <- function(vec, fn){
+  index <-
+    vec |>
+    lapply(fn) |>
+    unlist() |>
+    which()
+  if(length(index) > 0){
+    vnames <-
+      vec[index] |>
+      lapply(\(.x) attr(.x, "name")) |>
+      unlist()
+    vec_out <-
+      vec[index] |>
+      setNames(vnames)
+  }else{
+    vec_out <- NULL
+  }
+  vec_out
+}
+
 generate_T_avg <- function(lat){
   # Assume 25 C average at equator and -20 at poles
   cos(lat/180*pi)*45-20
@@ -161,20 +232,48 @@ clear_sky_radiation <- function(Ra, a_s, b_s, elevation){
   }
 }
 
+#' Linearly interpolate a time-varying variable at specific time point
+#'
 #' @export
-#' @noRd
-get_at_t_linear <- function(x, t){
-  i = floor(t) + 1  # plus 1 because t=0 at index=1
-  j = ceiling(t) + 1  # plus 1 because t=0 at index=1
-  t_i = floor(t)
-  t_j = ceiling(t)
-  if(i == j){
+#'
+#' @param x a vector of a time-varying values for which to interpolate
+#' @param t_ind a vector of times corresponding to the values in x
+#' @param t a single time point at which to
+#'
+get_at_t_linear <- function(x, t_ind, t){
+
+  stopifnot(length(t) == 1)
+
+  i = which.min(abs(t_ind - t))
+  if(t_ind[i] > t){
+    j = i
+    i = j - 1
+  }else{
+    j = i + 1
+  }
+
+  stopifnot(i > 0)
+  stopifnot(j <= length(x))
+
+  if(t_ind[i] == t){
     return(x[i])
   }else{
-    return(x[i]*(t_j-t) + x[j]*(t-t_i))/(t_j - t_i)
+    return(x[i]*(t_ind[j]-t) + x[j]*(t-t_ind[i]))/(t_ind[j] - t_ind[i])
   }
+
 }
 
+
+#' Modified Arrhenius function
+#'
+#' @export
+#'
+#' @param Tt temperature in Celsius
+#' @param ko reaction rate at the optimum temperature (To)
+#' @param H deactivation energy parameter
+#' @param E activation energy parameter
+#' @param To optimum temperature in Celsius
+#'
 mod_arr <- function(Tt, ko, H, E, To){
   R <- 8.314
   ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))

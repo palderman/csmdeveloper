@@ -2,7 +2,7 @@
 % Please edit documentation in R/csm_create_transform.R
 \name{csm_create_transform}
 \alias{csm_create_transform}
-\title{Create a cropping systems model (CSM) state variable}
+\title{Create a cropping systems model (CSM) transformed variable}
 \usage{
 csm_create_transform(name, definition, units, equation)
 }
@@ -16,5 +16,5 @@ the CSM variable}
 for the value of the transformed CSM state variable}
 }
 \description{
-Create a cropping systems model (CSM) state variable
+Create a cropping systems model (CSM) transformed variable
 }

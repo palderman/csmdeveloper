@@ -77,6 +77,11 @@ lotka_volt_dydt <-
     parms = lv_parameters,
     output_type = "deSolve")
 
+lotka_volt_dydt <-
+  csmdeveloper::csm_create_model(
+    state = lv_state,
+    parms = lv_parameters)
+
 # Run integration
 lotka_volt_dydt_out <-
   integ_list |>

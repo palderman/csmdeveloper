@@ -1,4 +1,4 @@
-#' Create a cropping systems model (CSM) state variable
+#' Create a cropping systems model (CSM) transformed variable
 #'
 #' @inheritParams csm_create_variable
 #'

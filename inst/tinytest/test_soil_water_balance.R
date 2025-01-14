@@ -192,33 +192,83 @@ sw_parameters <- csmdeveloper::csm_create_parameter(
   definition = "soil evaporation coefficient",
   units = "unitless")
 
-# Define weather inputs
-sw_wth <- c(
-  csmdeveloper::csm_create_transform(
-    "ETo_t",
-    definition = "reference evapotranspiration",
-  units = "mm",
-  equation = ~get_at_t_linear(wth[,1], t)),
-  csmdeveloper::csm_create_transform(
-    "P_t",
-    definition = "precipitation",
-    units = "mm",
-    equation = ~get_at_t_linear(wth[,2], t))
+# Define soil inputs
+sw_soil_vars <- c(
+  csmdeveloper::csm_create_variable(
+    "sw_fc",
+    definition = "soil water at field capacity",
+    units = "mm"
+  ),
+  csmdeveloper::csm_create_variable(
+    "sw_pwp",
+    definition = "soil water at permanent wilting point",
+    units = "mm"
+  ),
+  csmdeveloper::csm_create_variable(
+    "sw_rew",
+    definition = "soil water at limit of readily extractable water",
+    units = "mm"
+  ),
+  csmdeveloper::csm_create_variable(
+    "sw_tew",
+    definition = "soil water at limit of total extractable water",
+    units = "mm"
+  )
 )
 
+# Define weather variables
+sw_wth_vars <- c(
+  csmdeveloper::csm_create_variable(
+    "time",
+    definition = "time",
+    units = "days after planting"),
+  csmdeveloper::csm_create_variable(
+    "ETo",
+    definition = "reference evapotranspiration",
+    units = "mm"),
+  csmdeveloper::csm_create_variable(
+    "P",
+    definition = "precipitation",
+    units = "mm")
+)
+
+# Define input data structures
+sw_inputs <- c(
+  csmdeveloper::csm_create_data_structure(
+    "soil_data",
+    definition = "soil data",
+    variables = sw_soil_vars
+  ),
+  csmdeveloper::csm_create_data_structure(
+    "wth_data",
+    definition = "weather data",
+    variables = sw_wth_vars,
+    dimensions = c(time = 1, variables = 2)
+  )
+)
 
 # Define intermediate factors
 sw_factors <- c(
   csmdeveloper::csm_create_transform(
+    "ETo_t",
+    definition = "reference evapotranspiration at time t",
+    units = "mm",
+    equation = ~get_at_t_linear(ETo, time, t)),
+  csmdeveloper::csm_create_transform(
+    "P_t",
+    definition = "precipitation at time t",
+    units = "mm",
+    equation = ~get_at_t_linear(P, time, t)),
+  csmdeveloper::csm_create_transform(
     "fi",
     definition = "infiltration factor",
   units = "unitless",
-  equation = ~1 - 1/(1+exp(-log(99)/(soil[1] - (soil[1]*3 + soil[2])/4)*(sw - (soil[1]*7/8+soil[2]/8))))),
+  equation = ~1 - 1/(1+exp(-log(99)/(sw_fc - (sw_fc*3 + sw_pwp)/4)*(sw - (sw_fc*7/8+sw_pwp/8))))),
   csmdeveloper::csm_create_transform(
     "fe",
     definition = "evaporation factor",
     units = "unitless",
-    equation = ~1/(1+exp(-log(99)/(soil[3] - soil[4])*(sw - soil[3]))))
+    equation = ~1/(1+exp(-log(99)/(sw_rew - sw_tew)*(sw - sw_rew))))
 )
 
 # Create function for calculating rates
@@ -233,6 +283,12 @@ sw_dydt <-
                   "parms",
                   "wth"),
     output_type = "deSolve")
+
+sw_model <-
+  csmdeveloper::csm_create_model(sw_state,
+                                 sw_parameters,
+                                 sw_factors,
+                                 sw_inputs)
 
 # Run integration
 sw_dydt_out <-
