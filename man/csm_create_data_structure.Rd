@@ -4,12 +4,7 @@
 \alias{csm_create_data_structure}
 \title{Create a cropping systems model (CSM) data structure}
 \usage{
-csm_create_data_structure(
-  name,
-  definition,
-  variables,
-  dimensions = c(variables = 1)
-)
+csm_create_data_structure(name, definition, variables)
 }
 \arguments{
 \item{name}{a length-one character vector name of a variable}
@@ -19,11 +14,6 @@ csm_create_data_structure(
 \item{variables}{a list of the CSM variables (as defined with
 [csmdeveloper::csm_create_variable()]) that are contained within the data
  structure}
-
-\item{dimensions}{a named numeric vector of indices for dimensions
-of the dataset. It must contain an element named "variables" to
-denote the dimension across which the variables of the dataset
-are distributed}
 }
 \description{
 Create a cropping systems model (CSM) data structure
