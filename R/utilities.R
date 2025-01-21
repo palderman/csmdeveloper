@@ -245,7 +245,9 @@ get_at_t_linear <- function(x, t_ind, t){
   stopifnot(length(t) == 1)
 
   i = which.min(abs(t_ind - t))
-  if(t_ind[i] > t){
+  if(t_ind[i] == t){
+    j = i
+  }else if(t_ind[i] > t){
     j = i
     i = j - 1
   }else{
