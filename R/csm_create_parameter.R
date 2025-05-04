@@ -23,7 +23,7 @@ csm_create_parameter <- function(name, definition, units,
   }
 
   if(is.null(upper_bound)){
-    upper_bound <- rep(-Inf, length(name))
+    upper_bound <- rep(Inf, length(name))
   }else{
     stopifnot(length(name) == length(upper_bound))
   }
