@@ -2,14 +2,39 @@
 % Please edit documentation in R/csm_render_model.R
 \name{csm_render_model}
 \alias{csm_render_model}
-\title{Create a model definition for a Cropping System Model (CSM)}
+\title{Render a defined Cropping System Model (CSM)}
 \usage{
-csm_render_model(model)
+csm_render_model(
+  model,
+  name = "dy_dt",
+  output_type = c("Rfunction", "Rcode", "deSolve"),
+  arg_alias = NULL,
+  comment_char = "#",
+  line_end = "",
+  v_types = c(scalar = "", vector = "")
+)
 }
 \arguments{
 \item{model}{a list vector containing a CSM as created by
 \code{\link[=csm_create_model]{csm_create_model()}}}
+
+\item{name}{name of the resulting function}
+
+\item{output_type}{a character value indicating the type of output to produce}
+
+\item{arg_alias}{an optional named character vector whose names indicate
+variables for which to use an alias within the generated function and whose
+elements provide the corresponding alias}
+
+\item{comment_char}{a character value indicating which character to use as a
+prefix to comments in the generated code}
+
+\item{line_end}{a character value indicating which character(s) to indicate
+the end of a line of source code}
+
+\item{v_types}{a named character vector indicating the names of the variable
+types for scalars and vectors in the target output language}
 }
 \description{
-Create a model definition for a Cropping System Model (CSM)
+Render a defined Cropping System Model (CSM)
 }

@@ -17,7 +17,7 @@ csm_create_data_structure <- function(name, definition, variables){
   if(length(name) > 1){
     stopifnot(length(name) == length(variables))
   }else{
-    if(length(variables) > 1) variables <- list(variables)
+    variables <- list(variables)
   }
 
   data_structure <- mapply(\(.def, .name, .var, .dim){

@@ -1,9 +1,4 @@
-- Next time split csm_create_dydt() into csm_create_model() and csm_render_model()
-- Implement csm_create_data()
-    - definition of datasets
-    - time-variant vs time-invariant
-    - other descriptors of datasets
-
-- Probably for later package version: Come up with some way to implicitly add time-specific intermediate
-  variables for use in equations of transformed/state variables
+- Probably for later package version: Come up with some way to implicitly
+  add time-specific intermediate variables for use in equations of
+  transformed/state variables
 

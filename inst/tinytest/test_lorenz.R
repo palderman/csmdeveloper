@@ -65,14 +65,17 @@ lorenz_parameters <- csmdeveloper::csm_create_parameter(
                  "Lorenz c"),
   units = c("unitless", "unitless", "unitless"))
 
+# Create model
+lorenz_model <- csmdeveloper::csm_create_model(state = lorenz_state,
+                                               parameters = lorenz_parameters,
+                                               name = "lorenz")
+
 # Create function for calculating rates
 Lorenz_dydt <-
-  csmdeveloper::csm_create_dydt(
-    name = "lorenz",
-    state = lorenz_state,
-    parms = lorenz_parameters,
-    output_type = "deSolve"
-  )
+  csmdeveloper::csm_render_model(
+    model = lorenz_model,
+    arg_alias = c(parameters = "parms"),
+    output_type = "deSolve")
 
 # Run integration
 Lorenz_dydt_out <-

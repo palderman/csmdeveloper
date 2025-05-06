@@ -69,18 +69,16 @@ lv_parameters <- csmdeveloper::csm_create_parameter(
   units = c("rabbits per rabbit", "per fox",
             "foxes per fox", "foxes per rabbit"))
 
-# Create function for calculating rates
-lotka_volt_dydt <-
-  csmdeveloper::csm_create_dydt(
-    name = "lotka_volterra",
-    state = lv_state,
-    parms = lv_parameters,
-    output_type = "deSolve")
-
-lotka_volt_dydt <-
+# Define model
+lotka_volt_model <-
   csmdeveloper::csm_create_model(
     state = lv_state,
     parms = lv_parameters)
+
+# Create function for calculating rates
+lotka_volt_dydt <- csmdeveloper::csm_render_model(lotka_volt_model,
+                                                  arg_alias = c(parameters = "parms"),
+                                                  output_type = "deSolve")
 
 # Run integration
 lotka_volt_dydt_out <-

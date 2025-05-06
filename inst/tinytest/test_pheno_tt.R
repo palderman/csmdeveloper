@@ -44,7 +44,7 @@ parameters <-
 # Rate equation function
 pheno_tt_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- get_at_t_linear(wth[,1], t)
+    Tt <- get_at_t_linear(wth[,2], t)
     list(
       mod_arr(Tt, ko, H, E, To)
     )
@@ -53,8 +53,10 @@ pheno_tt_ref_dt <- function(t, state, parms, wth){
 
 # Generate air temperature forcings
 wth <-
-  matrix(generate_Tair(c(300:365,1:180)),
-         ncol = 1)
+  matrix(
+    c(seq_along(c(300:365,1:180)) - 1,
+      generate_Tair(c(300:365,1:180))),
+         ncol = 2)
 
 # Check mod_arr()
 expect_equal(
@@ -73,7 +75,7 @@ expect_equal(
                       parms = parameters,
                       wth = wth),
   with(as.list(parameters), {
-    list(mod_arr(wth[1,1], ko, H, E, To))
+    list(mod_arr(wth[1,2], ko, H, E, To))
   }),
   info = "pheno_tt_ref_dt(); t=0"
 )
@@ -84,7 +86,7 @@ expect_equal(
                       parms = parameters,
                       wth = wth),
   with(as.list(parameters), {
-    list(mod_arr(mean(wth[1:2,1]), ko, H, E, To))
+    list(mod_arr(mean(wth[1:2,2]), ko, H, E, To))
   }),
   info = "pheno_tt_ref_dt(); t=0.5"
 )
@@ -132,20 +134,33 @@ sp_parameters <- csmdeveloper::csm_create_parameter(
             "Joules  per mole", "degrees Celcius"))
 
 # Define weather inputs
-sp_wth <- csmdeveloper::csm_create_transform(
-  c("Tair"),
-  definition = c("air temperature"),
-  units = c("degrees Celcius"),
-  equation = ~get_at_t_linear(wth[,1], t))
+sp_wth_inp <- csmdeveloper::csm_create_transform(
+  c("wtime", "Tair"),
+  definition = c("time of weather observation",
+                 "air temperature"),
+  units = c("days after planting", "degrees Celcius"),
+  equation = c(~wth[,1],
+               ~get_at_t_linear(wth[,2], wtime, t)))
 
-# Create function for calculating rates
-pheno_tt_dydt <-
-  csmdeveloper::csm_create_dydt(
+sp_wth <- csmdeveloper::csm_create_data_structure(
+  name = "wth",
+  definition = "weather data",
+  variables = c(sp_wth_inp)
+)
+
+# Define model
+pheno_tt_model <-
+  csmdeveloper::csm_create_model(
     name = "pheno_tt",
     state = sp_state,
     parms = sp_parameters,
-    wth = sp_wth,
-    fill_in_names = TRUE,
+    wth = sp_wth)
+
+# Create function for calculating rates
+pheno_tt_dydt <-
+  csmdeveloper::csm_render_model(
+    model = pheno_tt_model,
+    arg_alias = c(parameters = "parms"),
     output_type = "deSolve")
 
 # Run integration
