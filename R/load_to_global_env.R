@@ -1,4 +1,3 @@
-#' @export
 #' @noRd
 load_to_global_env <- function(fun_names){
   backup_list <- NULL
@@ -27,7 +26,6 @@ load_to_global_env <- function(fun_names){
          envir = parent.frame())
 }
 
-#' @export
 #' @noRd
 cleanup_global_env <- function(){
   if(exists("rm_list", envir = parent.frame())){

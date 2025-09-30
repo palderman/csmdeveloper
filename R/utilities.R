@@ -238,11 +238,14 @@ clear_sky_radiation <- function(Ra, a_s, b_s, elevation){
 #'
 #' @param x a vector of a time-varying values for which to interpolate
 #' @param t_ind a vector of times corresponding to the values in x
-#' @param t a single time point at which to
+#' @param t a single time point at which to return a value
+#' @param method a string indicating what method to use for
+#'  interpolation. One of: "linear"
 #'
-get_at_t_linear <- function(x, t_ind, t){
+csm_get_at_t <- function(x, t_ind, t, method = "linear"){
 
   stopifnot(length(t) == 1)
+  match.arg(method, c("linear"))
 
   i = which.min(abs(t_ind - t))
   if(t_ind[i] == t){
@@ -276,7 +279,7 @@ get_at_t_linear <- function(x, t_ind, t){
 #' @param E activation energy parameter
 #' @param To optimum temperature in Celsius
 #'
-mod_arr <- function(Tt, ko, H, E, To){
+csm_mod_arr <- function(Tt, ko, H, E, To){
   R <- 8.314
   ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))
 }
