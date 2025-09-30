@@ -131,8 +131,8 @@ parameters <-
 # Rate equation function
 dsw_dt <- function(t, state, parms, wth, soil){
   with(as.list(c(state, parms)), {
-    ETo_t <- csmdeveloper::get_at_t_linear(wth[, "ETo"], wth[, "time"],t)
-    P_t <- csmdeveloper::get_at_t_linear(wth[, "P"], wth[, "time"], t)
+    ETo_t <- csmdeveloper::csm_get_at_t(wth[, "ETo"], wth[, "time"], t, "linear")
+    P_t <- csmdeveloper::csm_get_at_t(wth[, "P"], wth[, "time"], t, "linear")
     fi <- 1 - 1/(1+exp(-log(99)/(soil["sw_fc"] - (soil["sw_fc"]*3 + soil["sw_pwp"])/4)*(sw - (soil["sw_fc"]*7/8+soil["sw_pwp"]/8))))
     fe <- 1/(1+exp(-log(99)/(soil["sw_rew"] - soil["sw_tew"])*(sw - soil["sw_rew"])))
     list(
@@ -157,6 +157,9 @@ expect_equal(
   }),
   info = "dsw_dt(); t=0"
 )
+
+# Specify times at which to report output
+times <- seq(0, nrow(wth)-1, by = 0.01)
 
 # Create list of integration methods to test:
 integ_list <- c("euler", "rk4")
@@ -233,12 +236,12 @@ sw_wth_vars <- c(
     "ETo",
     definition = "reference evapotranspiration",
     units = "mm",
-    equation = ~get_at_t_linear(wth[,"ETo"], wtime, t)),
+    equation = ~csm_get_at_t(wth[,"ETo"], wtime, t, "linear")),
   csmdeveloper::csm_create_transform(
     "P",
     definition = "precipitation",
     units = "mm",
-    equation = ~get_at_t_linear(wth[,"P"], wtime, t))
+    equation = ~csm_get_at_t(wth[,"P"], wtime, t, "linear"))
 )
 
 # Define input data structures
@@ -282,7 +285,9 @@ sw_dydt <-
     name = "sw",
     model = sw_model,
     arg_alias = c(state_variables = "state",
-                  parameters = "parms"),
+                  parameters = "parms",
+                  soil_data = "soil",
+                  wth_data = "wth"),
     output_type = "deSolve")
 
 # Run integration
@@ -296,6 +301,7 @@ sw_dydt_out <-
       func = sw_dydt,
       parms = parameters,
       wth = wth,
+      soil = soil,
       method = .method
     )
   })
@@ -307,3 +313,4 @@ for(integ_method in integ_list){
     info = integ_method
   )
 }
+

@@ -9,17 +9,7 @@ generate_Tair <- function(doy = NULL){
   15*cos((doy-200)/365*2*pi)+15
 }
 
-get_at_t_linear <- function(x, t){
-  i = floor(t) + 1  # plus 1 because t=0 at index=1
-  j = ceiling(t) + 1  # plus 1 because t=0 at index=1
-  t_i = floor(t)
-  t_j = ceiling(t)
-  if(i == j){
-    return(x[i])
-  }else{
-    return(x[i]*(t_j-t) + x[j]*(t-t_i))/(t_j - t_i)
-  }
-}
+csm_get_at_t <- csmdeveloper::csm_get_at_t
 
 mod_arr <- function(Tt, ko, H, E, To){
   R <- 8.314
@@ -27,7 +17,7 @@ mod_arr <- function(Tt, ko, H, E, To){
 }
 
 csmdeveloper::load_to_global_env(
-  c("get_at_t_linear",
+  c("csm_get_at_t",
     "mod_arr")
 )
 
@@ -44,7 +34,7 @@ parameters <-
 # Rate equation function
 pheno_tt_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- get_at_t_linear(wth[,2], t)
+    Tt <- csm_get_at_t(wth[,2], wth[,1], t, "linear")
     list(
       mod_arr(Tt, ko, H, E, To)
     )
@@ -131,16 +121,16 @@ sp_parameters <- csmdeveloper::csm_create_parameter(
                  "activation energy",
                  "optimum temperature"),
   units = c("unitless", "Joules per mole",
-            "Joules  per mole", "degrees Celcius"))
+            "Joules  per mole", "degrees Celsius"))
 
 # Define weather inputs
 sp_wth_inp <- csmdeveloper::csm_create_transform(
   c("wtime", "Tair"),
   definition = c("time of weather observation",
                  "air temperature"),
-  units = c("days after planting", "degrees Celcius"),
+  units = c("days after planting", "degrees Celsius"),
   equation = c(~wth[,1],
-               ~get_at_t_linear(wth[,2], wtime, t)))
+               ~csm_get_at_t(wth[,2], wtime, t, "linear")))
 
 sp_wth <- csmdeveloper::csm_create_data_structure(
   name = "wth",

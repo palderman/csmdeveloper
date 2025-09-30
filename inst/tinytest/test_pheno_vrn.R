@@ -4,31 +4,17 @@ library(tinytest)
 # Phenology with Vernalization Model Test Example
 ###########################################
 
+csm_get_at_t <- csmdeveloper::csm_get_at_t
+
 generate_Tair <- function(doy = NULL){
   if(is.null(doy)) doy <- 1:365
   15*cos((doy-200)/365*2*pi)+15
 }
 
-get_at_t_linear <- function(x, t){
-  i = floor(t) + 1  # plus 1 because t=0 at index=1
-  j = ceiling(t) + 1  # plus 1 because t=0 at index=1
-  t_i = floor(t)
-  t_j = ceiling(t)
-  if(i == j){
-    return(x[i])
-  }else{
-    return(x[i]*(t_j-t) + x[j]*(t-t_i))/(t_j - t_i)
-  }
-}
-
-mod_arr <- function(Tt, ko, H, E, To){
-  R <- 8.314
-  ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))
-}
+mod_arr <- csmdeveloper::csm_mod_arr
 
 csmdeveloper::load_to_global_env(
-  c("get_at_t_linear",
-    "mod_arr")
+  c("mod_arr")
 )
 
 # Initial conditions
@@ -51,7 +37,7 @@ parameters <-
 # Rate equation function
 pheno_vrn_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- get_at_t_linear(wth[,2], t)
+    Tt <- csm_get_at_t(wth[,2], wth[,1], t, "linear")
     fv <- min(c(cum_vrn/vreq, 1))
     list(c(
       fv*mod_arr(Tt, ko, H, E, To),
@@ -167,7 +153,7 @@ sp_wth_inp <- csmdeveloper::csm_create_transform(
   units = c("days after planting",
             "degrees Celcius"),
   equation = c(~wth[,1],
-               ~get_at_t_linear(wth[,2], wtime, t)))
+               ~csm_get_at_t(wth[,2], wtime, t, "linear")))
 
 sp_wth <- csmdeveloper::csm_create_data_structure(
   name = "wth",
