@@ -23,6 +23,47 @@
 #' @param arg_alias an optional named character vector whose names indicate
 #'   variables for which to use an alias within the generated function and whose
 #'   elements provide the corresponding alias
+#' @examples
+#'
+#' # Define state variables
+#' lv_state <- csm_create_state(
+#'   c("x", "y"),
+#'   definition = c("prey", "predator"),
+#'   units = c("rabbits per square km", "foxes per square km"),
+#'   expression(~alpha*x-beta*x*y, ~delta*x*y-gamma*y))
+#'
+#' # Define parameters
+#' lv_parameters <- csm_create_parameter(
+#'   c("alpha", "beta", "gamma", "delta"),
+#'   definition = c("maximum prey per capita growth rate",
+#'                  "effect of predator population on prey death rate",
+#'                  "predator per capita death rate",
+#'                  "effect of prey population on predator growth rate"),
+#'   units = c("rabbits per rabbit", "per fox",
+#'             "foxes per fox", "foxes per rabbit"))
+#'
+#' # Define model
+#' lotka_volterra_model <-
+#'   csm_create_model(
+#'     state = lv_state,
+#'     parms = lv_parameters)
+#'
+#' # Render model into R function for calculating rate of change
+#' lotka_volterra_dydt <-
+#'   csm_render_model(lotka_volterra_model,
+#'                    arg_alias = c(parameters = "parms"))
+#'
+#' # Render model into raw R code
+#' lotka_volterra_code <-
+#'   csm_render_model(lotka_volterra_model,
+#'                    arg_alias = c(parameters = "parms"),
+#'                    output_type = "Rcode")
+#'
+#' # Render model into R function compatible with deSolve package
+#' lotka_volterra_deSolve <-
+#'   csm_render_model(lotka_volterra_model,
+#'                    arg_alias = c(parameters = "parms"),
+#'                    output_type = "deSolve")
 #'
 csm_render_model <- function(model,
                              name = "dy_dt",

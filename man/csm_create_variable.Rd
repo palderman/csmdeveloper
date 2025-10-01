@@ -18,3 +18,10 @@ the CSM variable}
 \description{
 Create a cropping systems model (CSM) variable
 }
+\examples{
+
+Tair <- csm_create_variable(name = "Tair",
+                            definition = "air temperature",
+                            units = "Celsius")
+
+}

@@ -6,6 +6,12 @@
 #' @param units a length-one character vector of the units of
 #'   the CSM variable
 #'
+#' @examples
+#'
+#' Tair <- csm_create_variable(name = "Tair",
+#'                             definition = "air temperature",
+#'                             units = "Celsius")
+#'
 #' @export
 #'
 csm_create_variable <- function(name, definition, units){

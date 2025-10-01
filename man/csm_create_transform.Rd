@@ -18,3 +18,14 @@ for the value of the transformed CSM state variable}
 \description{
 Create a cropping systems model (CSM) transformed variable
 }
+\examples{
+
+# Define intermediate factor
+
+sp_factors <- csmdeveloper::csm_create_transform(
+  name = "fv",
+  definition = "vernalization factor",
+  units = "relative progress towards complete vernalization (0-1)",
+  equation = ~min(c(cum_vrn/vreq, 1)))
+
+}

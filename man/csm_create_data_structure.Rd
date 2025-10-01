@@ -18,3 +18,20 @@ csm_create_data_structure(name, definition, variables)
 \description{
 Create a cropping systems model (CSM) data structure
 }
+\examples{
+
+# Create variables:
+wth_variables <- c(
+  csm_create_variable("Tair",
+                      "air temperature",
+                      "Celsius"),
+  csm_create_variable("SRAD",
+                      "solar radiation",
+                      "MJ/m2/d"))
+
+# Create weather data structure:
+weather <- csm_create_data_structure("weather",
+                                     "weather data",
+                                     wth_variables)
+
+}

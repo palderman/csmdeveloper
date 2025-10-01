@@ -18,3 +18,30 @@ for the rate of change of the CSM state variable}
 \description{
 Create a cropping systems model (CSM) state variable
 }
+\examples{
+
+# Define state variables with single call
+
+lv_state <- csm_create_state(
+  c("x", "y"),
+  definition = c("prey", "predator"),
+  units = c("rabbits per square km", "foxes per square km"),
+  expression(~alpha*x-beta*x*y, ~delta*x*y-gamma*y))
+
+# Define state variables with multiple calls
+
+lv_state <-
+c(
+  csm_create_state(
+    name = "x",
+    definition = "prey",
+    units = "rabbits per square km",
+    equation = ~alpha*x-beta*x*y),
+  csm_create_state(
+    name = "y",
+    definition = "predator",
+    units = "foxes per square km",
+    equation = ~delta*x*y-gamma*y)
+  )
+
+}
