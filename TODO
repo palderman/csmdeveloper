@@ -1,4 +1,7 @@
 - Add helper functions to run simulations
+    - Add as an additional output type for csm_render_model()?
+        - maybe: csm_render_model(..., output_type = "deSolve_simulator", ...)
+        - maybe: csm_render_model(..., output_type = "deSolve_integrator", ...)
 - Update package documentation to meet CRAN requirements
 - Probably for later package version: Come up with some way to implicitly
   add time-specific intermediate variables for use in equations of
