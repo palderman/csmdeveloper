@@ -1,6 +1,6 @@
 #' Create a dependency graph for a Cropping System Model (CSM)
 #'
-#' @export
+#' @noRd
 #'
 #' @md
 #'
