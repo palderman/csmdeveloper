@@ -288,7 +288,7 @@ sw_dydt <-
                   parameters = "parms",
                   soil_data = "soil",
                   wth_data = "wth"),
-    output_type = "deSolve")
+    output_type = "deSolveRFunction")
 
 # Run integration
 sw_dydt_out <-

@@ -9,18 +9,6 @@ generate_Tair <- function(doy = NULL){
   15*cos((doy-200)/365*2*pi)+15
 }
 
-csm_get_at_t <- csmdeveloper::csm_get_at_t
-
-mod_arr <- function(Tt, ko, H, E, To){
-  R <- 8.314
-  ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))
-}
-
-csmdeveloper::load_to_global_env(
-  c("csm_get_at_t",
-    "mod_arr")
-)
-
 # Initial conditions
 state <- c(du = 0)
 
@@ -34,9 +22,9 @@ parameters <-
 # Rate equation function
 pheno_tt_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- csm_get_at_t(wth[,2], wth[,1], t, "linear")
+    Tt <- csmdeveloper::csm_get_at_t(wth[,2], wth[,1], t, "linear")
     list(
-      mod_arr(Tt, ko, H, E, To)
+      csmdeveloper::csm_mod_arr(Tt, ko, H, E, To)
     )
   })
 }
@@ -51,7 +39,7 @@ wth <-
 # Check mod_arr()
 expect_equal(
   with(as.list(parameters), {
-    mod_arr(To, ko, H, E, To)
+    csmdeveloper::csm_mod_arr(To, ko, H, E, To)
   }),
   parameters["ko"],
   info = "mod_arr",
@@ -65,7 +53,7 @@ expect_equal(
                       parms = parameters,
                       wth = wth),
   with(as.list(parameters), {
-    list(mod_arr(wth[1,2], ko, H, E, To))
+    list(csmdeveloper::csm_mod_arr(wth[1,2], ko, H, E, To))
   }),
   info = "pheno_tt_ref_dt(); t=0"
 )
@@ -111,7 +99,7 @@ sp_state <- csmdeveloper::csm_create_state(
   c("du"),
   definition = c("development units"),
   units = c("physiological days"),
-  expression(~mod_arr(Tair, ko, H, E, To)))
+  expression(~csmdeveloper::csm_mod_arr(Tair, ko, H, E, To)))
 
 # Define parameters
 sp_parameters <- csmdeveloper::csm_create_parameter(
@@ -130,7 +118,9 @@ sp_wth_inp <- csmdeveloper::csm_create_transform(
                  "air temperature"),
   units = c("days after planting", "degrees Celsius"),
   equation = c(~wth[,1],
-               ~csm_get_at_t(wth[,2], wtime, t, "linear")))
+               ~csmdeveloper::csm_get_at_t(wth[,2], wtime, t, "linear")
+               # ~wth[t+1,2]
+               ))
 
 sp_wth <- csmdeveloper::csm_create_data_structure(
   name = "wth",
@@ -151,7 +141,7 @@ pheno_tt_dydt <-
   csmdeveloper::csm_render_model(
     model = pheno_tt_model,
     arg_alias = c(parameters = "parms"),
-    output_type = "deSolve")
+    output_type = "deSolveRFunction")
 
 # Run integration
 pheno_tt_dydt_out <-
@@ -175,5 +165,3 @@ for(integ_method in integ_list){
     info = integ_method
   )
 }
-
-csmdeveloper::cleanup_global_env()

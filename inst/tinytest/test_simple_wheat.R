@@ -9,15 +9,9 @@ generate_Tair <- function(doy = NULL){
   15*cos((doy-200)/365*2*pi)+15
 }
 
-csm_get_at_t <- csmdeveloper::csm_get_at_t
-
-sig <- function(x, y){
+sig <<- function(x, y){
   1/(1 + exp(-100*(x/y - 1)))
 }
-
-csmdeveloper:::load_to_global_env(
-  c("sig")
-)
 
 # Initial conditions
 state <- c(TT = 0, LAI = 0.01, biomass = 0.1)
@@ -35,8 +29,8 @@ parameters <-
 # Rate equation function
 swheat_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tavg <- csm_get_at_t(wth[,2], wth[,1], t, "linear")
-    SRAD <- csm_get_at_t(wth[,3], wth[,1], t, "linear")
+    Tavg <- csmdeveloper::csm_get_at_t(wth[,2], wth[,1], t, "linear")
+    SRAD <- csmdeveloper::csm_get_at_t(wth[,3], wth[,1], t, "linear")
     c(
       # dTT:
       (Tavg - Tbase)*sig(Tavg+273.15, Tbase+273.15),
@@ -187,13 +181,13 @@ wth_in <- c(
     name = "Tair",
     definition = "air temperature at time t",
     units = "degree C",
-    ~csm_get_at_t(wth[, 2], wth[,1], t, "linear")),
+    ~csmdeveloper::csm_get_at_t(wth[, 2], wth[,1], t, "linear")),
 
   csmdeveloper::csm_create_transform(
     name = "SRAD",
     definition = "solar radiation",
     units = "MJ m^{-2} d^{-1}",
-    ~csm_get_at_t(wth[, 3], wth[,1], t, "linear"))
+    ~csmdeveloper::csm_get_at_t(wth[, 3], wth[,1], t, "linear"))
 
 )
 
@@ -248,7 +242,7 @@ swheat_model <-
 swheat_dydt <- csmdeveloper::csm_render_model(
     model = swheat_model,
     arg_alias = c(state_variables = "state", parameters = "parms"),
-    output_type = "deSolve"
+    output_type = "deSolveRFunction"
   )
 
 # Run integration
@@ -274,4 +268,4 @@ for(integ_method in integ_list){
   )
 }
 
-csmdeveloper:::cleanup_global_env()
+rm("sig", envir = .GlobalEnv)

@@ -241,24 +241,211 @@ clear_sky_radiation <- function(Ra, a_s, b_s, elevation){
 #' @param t a single time point at which to return a value
 #' @param method a string indicating what method to use for
 #'  interpolation. One of: "linear"
+#' @param search a string indicating what method to use for
+#'  finding the correct indices within t_ind. One of: "bisection",
+#'  "interpolation"
 #'
-csm_get_at_t <- function(x, t_ind, t, method = "linear"){
+csm_get_at_t <- function(x, t_ind, t,
+                         method = "linear",
+                         search = c("interpolation", "bisection",
+                                    "bruteforce", "i=t+1")){
+  search <- search[1]
 
-  stopifnot(length(t) == 1)
-  match.arg(method, c("linear"))
-
-  i = which.min(abs(t_ind - t))
-  if(t_ind[i] == t){
-    j = i
-  }else if(t_ind[i] > t){
-    j = i
-    i = j - 1
-  }else{
-    j = i + 1
+  if(search == "i=t+1"){
+    return(x[t+1])
   }
 
-  stopifnot(i > 0)
-  stopifnot(j <= length(x))
+  method <- method[1]
+
+  t_ind_len <- length(t_ind)
+  if(length(t) != 1) stop("Length of argument t not equal to 1.")
+  method <- method[1]
+  if(method != "linear") stop("method must be one of: linear.")
+  search <- search[1]
+  if(!any(search != c("interpolation", "bisection", "bruteforce",
+                      "i=t+1"))){
+    stop("method must be one of: linear.")
+  }
+  if(t > t_ind[t_ind_len]){
+    stop("t is greater than last value of t_ind.")
+  }
+  if(t < t_ind[1]) stop("t is less than last value of t_ind.")
+
+  if(search == "i=t+1"){
+    return(x[t+1])
+  }
+
+  i <- floor(t) |> max(1)
+  j <- ceiling(t) |> min(length(t_ind)) |> max(1)
+
+  if(t_ind[i] == t){
+    return(x[i])
+  }else{
+    if(search == "bisection"){
+      if(t_ind[i] > t) i <- 1
+      if(t_ind[j] < t) j <- length(t_ind)
+      if(t_ind[i] == t) return(x[i])
+      if(t_ind[j] == t) return(x[j])
+      while(i < j && (i + 1) != j){
+        ij_cand <- floor((i+j)/2)
+        if(t_ind[ij_cand] == t){
+          return(x[ij_cand])
+        }else if(t_ind[ij_cand] < t){
+          i <- ij_cand
+        }else{
+          j <- ij_cand
+        }
+      }
+    }else if(search == "interpolation"){
+      i <- 1
+      j <- length(t_ind)
+      while(i < j && (i + 1) != j){
+        if(t_ind[i] > t) i <- 1
+        if(t_ind[j] < t) j <- length(t_ind)
+        m <- (j - i)/(t_ind[j] - t_ind[i])
+        b <- j - m*t_ind[j]
+        ij <- m*t+b
+        i <- floor(ij)
+        if(t_ind[i] == t) return(x[i])
+        j <- ceiling(ij)
+      }
+    }else if(search == "bruteforce"){
+      i <- which.min(abs(t_ind - t))
+      if(t_ind[i] == t){
+        return(x[i])
+      }else if(t_ind[i] > t){
+        j = i
+        i = j - 1
+      }else{
+        j = i + 1
+      }
+    }
+  }
+
+  # i = which.min(abs(t_ind - t))
+  # if(t_ind[i] == t){
+  #   j = i
+  # }else if(t_ind[i] > t){
+  #   j = i
+  #   i = j - 1
+  # }else{
+  #   j = i + 1
+  # }
+
+  if(!(i > 0)) stop("i must be greater than 0.")
+  if(!(j <= length(x))) stop("j must be less than or equal to length(x).")
+
+  if(t_ind[i] == t){
+    return(x[i])
+  }else{
+    return(x[i]*(t_ind[j]-t) + x[j]*(t-t_ind[i]))/(t_ind[j] - t_ind[i])
+  }
+
+}
+
+
+#' Get time indices bracketing a specific time point
+#'
+#' @export
+#'
+#' @param t_ind a vector of times
+#' @param t a single time point at which to find the bracketing time
+#'  indices
+#' @param method a string indicating what method to use for
+#'  interpolation. One of: "linear"
+#' @param search a string indicating what method to use for
+#'  finding the correct indices within t_ind. One of: "bisection",
+#'  "interpolation", "bruteforce", "i=t+1"
+#'
+csm_get_t_indices <- function(t_ind, t,
+                              method = "linear",
+                              search = c("interpolation", "bisection",
+                                    "bruteforce", "i=t+1")){
+  search <- search[1]
+
+  if(search == "i=t+1"){
+    return(x[t+1])
+  }
+
+  method <- method[1]
+
+  t_ind_len <- length(t_ind)
+  if(length(t) != 1) stop("Length of argument t not equal to 1.")
+  method <- method[1]
+  if(method != "linear") stop("method must be one of: linear.")
+  search <- search[1]
+  if(!any(search != c("interpolation", "bisection", "bruteforce",
+                      "i=t+1"))){
+    stop("method must be one of: linear.")
+  }
+  if(t > t_ind[t_ind_len]){
+    stop("t is greater than last value of t_ind.")
+  }
+  if(t < t_ind[1]) stop("t is less than last value of t_ind.")
+
+  if(search == "i=t+1"){
+    return(x[t+1])
+  }
+
+  i <- floor(t) |> max(1)
+  j <- ceiling(t) |> min(length(t_ind)) |> max(1)
+
+  if(t_ind[i] == t){
+    return(x[i])
+  }else{
+    if(search == "bisection"){
+      if(t_ind[i] > t) i <- 1
+      if(t_ind[j] < t) j <- length(t_ind)
+      if(t_ind[i] == t) return(x[i])
+      if(t_ind[j] == t) return(x[j])
+      while(i < j && (i + 1) != j){
+        ij_cand <- floor((i+j)/2)
+        if(t_ind[ij_cand] == t){
+          return(x[ij_cand])
+        }else if(t_ind[ij_cand] < t){
+          i <- ij_cand
+        }else{
+          j <- ij_cand
+        }
+      }
+    }else if(search == "interpolation"){
+      i <- 1
+      j <- length(t_ind)
+      while(i < j && (i + 1) != j){
+        if(t_ind[i] > t) i <- 1
+        if(t_ind[j] < t) j <- length(t_ind)
+        m <- (j - i)/(t_ind[j] - t_ind[i])
+        b <- j - m*t_ind[j]
+        ij <- m*t+b
+        i <- floor(ij)
+        if(t_ind[i] == t) return(x[i])
+        j <- ceiling(ij)
+      }
+    }else if(search == "bruteforce"){
+      i <- which.min(abs(t_ind - t))
+      if(t_ind[i] == t){
+        return(x[i])
+      }else if(t_ind[i] > t){
+        j = i
+        i = j - 1
+      }else{
+        j = i + 1
+      }
+    }
+  }
+
+  # i = which.min(abs(t_ind - t))
+  # if(t_ind[i] == t){
+  #   j = i
+  # }else if(t_ind[i] > t){
+  #   j = i
+  #   i = j - 1
+  # }else{
+  #   j = i + 1
+  # }
+
+  if(!(i > 0)) stop("i must be greater than 0.")
+  if(!(j <= length(x))) stop("j must be less than or equal to length(x).")
 
   if(t_ind[i] == t){
     return(x[i])
@@ -284,7 +471,6 @@ csm_mod_arr <- function(Tt, ko, H, E, To){
   ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))
 }
 
-#' @export
 #' @noRd
 generate_ETo <- function(doy, lat, method = "Hargreaves", ...){
   dot_args <- list(...)

@@ -7,11 +7,10 @@
 csm_render_model(
   model,
   name = "dy_dt",
-  output_type = c("Rfunction", "Rcode", "deSolve"),
+  output_type = c("Rfunction", "RCode", "deSolveRFunction", "deSolveRCode",
+    "deSolveRcppFunction", "deSolveRcppCode", "deSolveFortranCode"),
   arg_alias = NULL,
-  comment_char = "#",
-  line_end = "",
-  v_types = c(scalar = "", vector = "")
+  insert_functions = NULL
 )
 }
 \arguments{
@@ -26,14 +25,7 @@ csm_render_model(
 variables for which to use an alias within the generated function and whose
 elements provide the corresponding alias}
 
-\item{comment_char}{a character value indicating which character to use as a
-prefix to comments in the generated code}
-
-\item{line_end}{a character value indicating which character(s) to indicate
-the end of a line of source code}
-
-\item{v_types}{a named character vector indicating the names of the variable
-types for scalars and vectors in the target output language}
+\item{insert_functions}{an optional list of functions to add to rendered code}
 }
 \description{
 Render a defined Cropping System Model (CSM)

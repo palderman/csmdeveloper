@@ -4,18 +4,10 @@ library(tinytest)
 # Phenology with Vernalization Model Test Example
 ###########################################
 
-csm_get_at_t <- csmdeveloper::csm_get_at_t
-
 generate_Tair <- function(doy = NULL){
   if(is.null(doy)) doy <- 1:365
   15*cos((doy-200)/365*2*pi)+15
 }
-
-mod_arr <- csmdeveloper::csm_mod_arr
-
-csmdeveloper::load_to_global_env(
-  c("mod_arr")
-)
 
 # Initial conditions
 state <- c(du = 0,
@@ -37,11 +29,11 @@ parameters <-
 # Rate equation function
 pheno_vrn_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- csm_get_at_t(wth[,2], wth[,1], t, "linear")
+    Tt <- csmdeveloper::csm_get_at_t(wth[,2], wth[,1], t, "linear")
     fv <- min(c(cum_vrn/vreq, 1))
     list(c(
-      fv*mod_arr(Tt, ko, H, E, To),
-      mod_arr(Tt, kv, Hv, Ev, Vo)
+      fv*csmdeveloper::csm_mod_arr(Tt, ko, H, E, To),
+      csmdeveloper::csm_mod_arr(Tt, kv, Hv, Ev, Vo)
     ))
   })
 }
@@ -123,8 +115,8 @@ sp_state <- csmdeveloper::csm_create_state(
                  "cumulative vernalization"),
   units = c("physiological days",
             "vernalization days"),
-  expression(~fv*mod_arr(Tair, ko, H, E, To),
-             ~mod_arr(Tair, kv, Hv, Ev, Vo)))
+  expression(~fv*csmdeveloper::csm_mod_arr(Tair, ko, H, E, To),
+             ~csmdeveloper::csm_mod_arr(Tair, kv, Hv, Ev, Vo)))
 
 # Define parameters
 sp_parameters <- csmdeveloper::csm_create_parameter(
@@ -153,7 +145,7 @@ sp_wth_inp <- csmdeveloper::csm_create_transform(
   units = c("days after planting",
             "degrees Celcius"),
   equation = c(~wth[,1],
-               ~csm_get_at_t(wth[,2], wtime, t, "linear")))
+               ~csmdeveloper::csm_get_at_t(wth[,2], wtime, t, "linear")))
 
 sp_wth <- csmdeveloper::csm_create_data_structure(
   name = "wth",
@@ -184,7 +176,7 @@ pheno_vrn_dydt <-
     name = "pheno_vrn",
     arg_alias = c(state_variables = "state",
                   parameters = "parms"),
-    output_type = "deSolve")
+    output_type = "deSolveRFunction")
 
 # Run integration
 pheno_vrn_dydt_out <-
