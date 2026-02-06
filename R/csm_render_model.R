@@ -7,7 +7,12 @@
 #' @param model a list vector containing a CSM as created by
 #'  [csmdeveloper::csm_create_model()]
 #'
-#' @param output_type a character value indicating the type of output to produce
+#' @param output_type a character value indicating the type of output to produce;
+#'   one of: "function" (a callable function) or "code" (computer code for the
+#'   model)
+#'
+#' @param language a character value indicating which programming language into
+#'  which to render the model
 #'
 #' @param name name of the resulting function
 #'
@@ -42,44 +47,40 @@
 #'     state = lv_state,
 #'     parms = lv_parameters)
 #'
-#' # Render model into R function for calculating rate of change
-#' lotka_volterra_dydt <-
-#'   csm_render_model(lotka_volterra_model,
-#'                    arg_alias = c(parameters = "parms"))
-#'
 #' # Render model into raw R code
 #' lotka_volterra_code <-
 #'   csm_render_model(lotka_volterra_model,
 #'                    arg_alias = c(parameters = "parms"),
-#'                    output_type = "Rcode")
+#'                    output_type = "code",
+#'                    language = "R")
 #'
-#' # Render model into R function compatible with deSolve package
-#' lotka_volterra_deSolve <-
+#' # Render model into a callable R function
+#' lotka_volterra_fun <-
 #'   csm_render_model(lotka_volterra_model,
 #'                    arg_alias = c(parameters = "parms"),
-#'                    output_type = "deSolve")
+#'                    output_type = "function",
+#'                    language = "R")
 #'
 csm_render_model <- function(
     model,
     name = "dy_dt",
-    output_type = c("Rfunction", "RCode",
-                    "deSolveRFunction", "deSolveRCode",
-                    "deSolveRcppFunction", "deSolveRcppCode",
-                    "deSolveFortranCode"),
+    output_type = c("function", "code"),
+    language = c("R", "Rcpp"),
     arg_alias = NULL,
     insert_functions = NULL){
 
   output_type <- match.arg(output_type)
+  language <- match.arg(language)
 
-  if(grepl("RcppFunction", output_type) &
+  if(language == "Rcpp" &
      !requireNamespace("Rcpp", quietly = TRUE)){
     paste0(
-      "Rcpp must be installed for output_type ",
-      output_type, ".") |>
+      "Rcpp package must be installed for language=",
+      language, ".") |>
       stop()
   }
 
-  if(grepl("RFunction|RCode", output_type)){
+  if(language == "R"){
     comment_char <- "#"
     line_end <- ""
     assign_op <- "<-"
@@ -89,7 +90,7 @@ csm_render_model <- function(
     declare_v_type <- FALSE
     v_types = c(scalar = "scalar",
                 array = "vector")
-  }else if(grepl("Rcpp", output_type)){
+  }else if(language == "Rcpp"){
     comment_char <- "//"
     line_end <- ";"
     assign_op <- "="
@@ -99,7 +100,7 @@ csm_render_model <- function(
     declare_v_type <- TRUE
     v_types = c(scalar = "double",
                 array = "NumericVector")
-  }else if(grepl("Fortran", output_type)){
+  }else if(language == "Fortran"){
     comment_char <- "!"
     line_end <- ""
     assign_op <- "="
@@ -131,12 +132,12 @@ csm_render_model <- function(
 
   state_names <- names(model$state_variables)
 
-  if(output_type %in% c("RFunction", "RCode", "deSolveRFunction")){
+  if(language == "R"){
     dstate_dt <- paste0("d", arg_names["state_variables"], "_dt ", assign_op, " ",
                         "vector(\"numeric\", length(", arg_names["state_variables"], "))",
                         line_end)
     state_arg <- arg_names["state_variables"]
-  }else if(grepl("Rcpp", output_type)){
+  }else if(language == "Rcpp"){
     dstate_dt <- paste0(state_type, " d", arg_names["state_variables"], "_dt(",
                         arg_names["state_variables"], ".size())",
                         line_end)
@@ -164,11 +165,11 @@ csm_render_model <- function(
     dydt_dots <- NULL
   }else{
     dydt_dots <- get_dydt_dots(dots_list, arg_names, comment_char,
-                               v_types, line_end, output_type,
+                               v_types, line_end, vector_base_adj,
                                declare_v_type)
   }
 
-  if(grepl("Rcpp", output_type)){
+  if(language == "Rcpp"){
     dydt_args <-
       ifelse(arg_names %in% names(model$data_structures),
              "DataFrame",
@@ -179,26 +180,13 @@ csm_render_model <- function(
     dydt_args <- paste0(arg_names, collapse = ", ")
   }
 
-  if(grepl("deSolve", output_type)){
-    if(grepl("Rcpp", output_type)){
-      dydt_signature <- paste0("List ", name, "(NumericVector t, ", dydt_args, ")")
-    }else{
-      dydt_signature <- paste0("function(t, ", dydt_args, ")")
-    }
+  if(language == "Rcpp"){
+    dydt_signature <- paste0("List ", name, "(NumericVector t, ", dydt_args, ")")
   }else{
-    if(grepl("Rcpp", output_type)){
-      dydt_signature <- paste0("NumericVector ", name,
-                               "(", dydt_args, ")")
-    }else{
-      dydt_signature <- paste0("function(", dydt_args, ")")
-    }
+    dydt_signature <- paste0("function(t, ", dydt_args, ")")
   }
 
-  if(grepl("Rcpp", output_type)){
-    state_indices <- seq_along(state) - 1
-  }else{
-    state_indices <- seq_along(state)
-  }
+  state_indices <- seq_along(state) + vector_base_adj
 
   dydt_state <-
     c(code_comment("State variables:", comment_char),
@@ -241,13 +229,13 @@ csm_render_model <- function(
     paste0("  ", dydt_body),
     paste0("  ",
            code_return(paste0("d", arg_names["state_variables"], "_dt"),
-                       output_type),
+                       language),
            line_end),
     "}",
     ""
   )
 
-  if(grepl("Rcpp", output_type)){
+  if(language == "Rcpp"){
     dydt_output <-
       c("#include <Rcpp.h>",
         "using namespace Rcpp;",
@@ -256,11 +244,13 @@ csm_render_model <- function(
         dydt_output)
   }
 
-  if(output_type %in% c("RFunction", "deSolveRFunction")){
+  if(output_type == "function" &
+     language == "R"){
     dydt_output <-
       parse(text = dydt_output) |>
       eval()
-  }else if(output_type == "deSolveRcppFunction"){
+  }else if(output_type == "function" &
+           language == "Rcpp"){
     Rcpp::sourceCpp(code = dydt_output)
   }
 
@@ -352,18 +342,14 @@ get_arg_name <- function(.i, .v_list, arg_names){
 }
 
 get_declaration <- function(.d, dots_list, arg_names, v_types,
-                            line_end, comment_char, output_type,
+                            line_end, comment_char, v_base_adj,
                             declare_v_type){
 
   if(is_data_structure(dots_list[[.d]])){
 
     .v <- attr(dots_list[[.d]], "variables")
 
-    if(grepl("Rcpp", output_type)){
-      v_indices <- seq_along(.v) - 1
-    }else{
-      v_indices <- seq_along(.v)
-    }
+    v_indices <- seq_along(.v) + v_base_adj
 
     mapply(dydt_declaration,
            .i = v_indices,
@@ -384,11 +370,7 @@ get_declaration <- function(.d, dots_list, arg_names, v_types,
 
     .d_type <- get_v_type(dots_list[[.d]], v_types)
 
-    if(grepl("Rcpp", output_type)){
-      d_indices <- seq_along(dots_list[[.d]]) - 1
-    }else{
-      d_indices <- seq_along(dots_list[[.d]])
-    }
+    d_indices <- seq_along(dots_list[[.d]]) + v_base_adj
 
     mapply(dydt_declaration,
            .i = d_indices,
@@ -411,7 +393,7 @@ is_csm_parameter <- function(.v){
 }
 
 get_dydt_dots <- function(dots_list, arg_names, comment_char = "#",
-                          v_types, line_end, output_type,
+                          v_types, line_end, v_base_adj,
                           declare_v_type){
 
   dots_declaration <-
@@ -422,7 +404,7 @@ get_dydt_dots <- function(dots_list, arg_names, comment_char = "#",
            v_types = v_types,
            comment_char = comment_char,
            line_end = line_end,
-           output_type = output_type,
+           v_base_adj = v_base_adj,
            declare_v_type = declare_v_type)
 
   dots_is_parameter <-
@@ -482,16 +464,11 @@ code_comment <- function(the_comment, comment_char = "#"){
   paste0(comment_char, " ", the_comment)
 }
 
-code_return <- function(return_variable,
-                        output_type){
-  if(output_type %in% c("Rfunction", "Rcode")){
-    return_code <- paste0("return(", return_variable, ")")
-  }else if(output_type == "deSolveRFunction"){
+code_return <- function(return_variable, language){
+  if(language == "R"){
     return_code <- paste0("return(list(", return_variable, "))")
-  }else if(grepl("deSolveRcpp", output_type)){
+  }else if(language == "Rcpp"){
     return_code <- paste0("return List::create(", return_variable, ")")
-  }else if(grepl("Rcpp", output_type)){
-    return_code <- paste0("return ", return_variable)
   }else{
     return_code <- return_variable
   }

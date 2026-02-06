@@ -75,7 +75,8 @@ Lorenz_dydt <-
   csmdeveloper::csm_render_model(
     model = lorenz_model,
     arg_alias = c(parameters = "parms"),
-    output_type = "deSolveRFunction")
+    output_type = "function",
+    language = "R")
 
 # Run integration
 Lorenz_dydt_out <-

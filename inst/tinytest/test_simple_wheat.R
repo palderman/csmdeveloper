@@ -242,7 +242,8 @@ swheat_model <-
 swheat_dydt <- csmdeveloper::csm_render_model(
     model = swheat_model,
     arg_alias = c(state_variables = "state", parameters = "parms"),
-    output_type = "deSolveRFunction"
+    output_type = "function",
+    language = "R"
   )
 
 # Run integration

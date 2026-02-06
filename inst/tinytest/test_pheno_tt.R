@@ -141,7 +141,8 @@ pheno_tt_dydt <-
   csmdeveloper::csm_render_model(
     model = pheno_tt_model,
     arg_alias = c(parameters = "parms"),
-    output_type = "deSolveRFunction")
+    output_type = "function",
+    language = "R")
 
 # Run integration
 pheno_tt_dydt_out <-

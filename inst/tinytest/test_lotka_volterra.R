@@ -78,7 +78,8 @@ lotka_volt_model <-
 # Create function for calculating rates
 lotka_volt_dydt <- csmdeveloper::csm_render_model(lotka_volt_model,
                                                   arg_alias = c(parameters = "parms"),
-                                                  output_type = "deSolveRFunction")
+                                                  output_type = "function",
+                                                  language = "R")
 
 # Run integration
 lotka_volt_dydt_out <-

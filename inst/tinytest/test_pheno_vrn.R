@@ -176,7 +176,8 @@ pheno_vrn_dydt <-
     name = "pheno_vrn",
     arg_alias = c(state_variables = "state",
                   parameters = "parms"),
-    output_type = "deSolveRFunction")
+    output_type = "function",
+    language = "R")
 
 # Run integration
 pheno_vrn_dydt_out <-
