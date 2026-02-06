@@ -4,7 +4,7 @@
 #'
 #' @md
 #'
-#' @param model a model as defined using [csmdeveloper::csm_create_model()]
+#' @param model a model as defined using [csmbuilder::csm_create_model()]
 #'
 csm_dependency_graph <- function(model){
 

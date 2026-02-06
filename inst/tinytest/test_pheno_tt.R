@@ -22,9 +22,9 @@ parameters <-
 # Rate equation function
 pheno_tt_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- csmdeveloper::csm_get_at_t(wth[,2], wth[,1], t, "linear")
+    Tt <- csmbuilder::csm_get_at_t(wth[,2], wth[,1], t, "linear")
     list(
-      csmdeveloper::csm_mod_arr(Tt, ko, H, E, To)
+      csmbuilder::csm_mod_arr(Tt, ko, H, E, To)
     )
   })
 }
@@ -39,7 +39,7 @@ wth <-
 # Check mod_arr()
 expect_equal(
   with(as.list(parameters), {
-    csmdeveloper::csm_mod_arr(To, ko, H, E, To)
+    csmbuilder::csm_mod_arr(To, ko, H, E, To)
   }),
   parameters["ko"],
   info = "mod_arr",
@@ -53,7 +53,7 @@ expect_equal(
                       parms = parameters,
                       wth = wth),
   with(as.list(parameters), {
-    list(csmdeveloper::csm_mod_arr(wth[1,2], ko, H, E, To))
+    list(csmbuilder::csm_mod_arr(wth[1,2], ko, H, E, To))
   }),
   info = "pheno_tt_ref_dt(); t=0"
 )
@@ -64,7 +64,7 @@ expect_equal(
                       parms = parameters,
                       wth = wth),
   with(as.list(parameters), {
-    list(csmdeveloper::csm_mod_arr(mean(wth[1:2,2]), ko, H, E, To))
+    list(csmbuilder::csm_mod_arr(mean(wth[1:2,2]), ko, H, E, To))
   }),
   info = "pheno_tt_ref_dt(); t=0.5"
 )
@@ -91,18 +91,18 @@ pheno_tt_ref_out <-
   })
 
 #######################################################
-# Create Phenology Thermal Time Model with csmdeveloper
+# Create Phenology Thermal Time Model with csmbuilder
 #######################################################
 
 # Define state variables
-sp_state <- csmdeveloper::csm_create_state(
+sp_state <- csmbuilder::csm_create_state(
   c("du"),
   definition = c("development units"),
   units = c("physiological days"),
-  expression(~csmdeveloper::csm_mod_arr(Tair, ko, H, E, To)))
+  expression(~csmbuilder::csm_mod_arr(Tair, ko, H, E, To)))
 
 # Define parameters
-sp_parameters <- csmdeveloper::csm_create_parameter(
+sp_parameters <- csmbuilder::csm_create_parameter(
   c("ko", "H", "E", "To"),
   definition = c("relative reaction rate",
                  "deactivation energy",
@@ -112,17 +112,17 @@ sp_parameters <- csmdeveloper::csm_create_parameter(
             "Joules  per mole", "degrees Celsius"))
 
 # Define weather inputs
-sp_wth_inp <- csmdeveloper::csm_create_transform(
+sp_wth_inp <- csmbuilder::csm_create_transform(
   c("wtime", "Tair"),
   definition = c("time of weather observation",
                  "air temperature"),
   units = c("days after planting", "degrees Celsius"),
   equation = c(~wth[,1],
-               ~csmdeveloper::csm_get_at_t(wth[,2], wtime, t, "linear")
+               ~csmbuilder::csm_get_at_t(wth[,2], wtime, t, "linear")
                # ~wth[t+1,2]
                ))
 
-sp_wth <- csmdeveloper::csm_create_data_structure(
+sp_wth <- csmbuilder::csm_create_data_structure(
   name = "wth",
   definition = "weather data",
   variables = c(sp_wth_inp)
@@ -130,7 +130,7 @@ sp_wth <- csmdeveloper::csm_create_data_structure(
 
 # Define model
 pheno_tt_model <-
-  csmdeveloper::csm_create_model(
+  csmbuilder::csm_create_model(
     name = "pheno_tt",
     state = sp_state,
     parms = sp_parameters,
@@ -138,7 +138,7 @@ pheno_tt_model <-
 
 # Create function for calculating rates
 pheno_tt_dydt <-
-  csmdeveloper::csm_render_model(
+  csmbuilder::csm_render_model(
     model = pheno_tt_model,
     arg_alias = c(parameters = "parms"),
     output_type = "function",

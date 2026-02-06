@@ -47,18 +47,18 @@ Lorenz_ref_out <-
   })
 
 #################################
-# Create Lorenz with csmdeveloper
+# Create Lorenz with csmbuilder
 #################################
 
 # Define state variables
-lorenz_state <- csmdeveloper::csm_create_state(
+lorenz_state <- csmbuilder::csm_create_state(
   c("X", "Y", "Z"),
   definition = c("Lorenz X", "Lorenz Y", "Lorenz Z"),
   units = c("unitless", "unitless", "unitless"),
   expression(~a*X+Y*Z, ~b*(Y-Z), ~-X*Y+c*Y-Z))
 
 # Define parameters
-lorenz_parameters <- csmdeveloper::csm_create_parameter(
+lorenz_parameters <- csmbuilder::csm_create_parameter(
   c("a", "b", "c"),
   definition = c("Lorenz a",
                  "Lorenz b",
@@ -66,13 +66,13 @@ lorenz_parameters <- csmdeveloper::csm_create_parameter(
   units = c("unitless", "unitless", "unitless"))
 
 # Create model
-lorenz_model <- csmdeveloper::csm_create_model(state = lorenz_state,
+lorenz_model <- csmbuilder::csm_create_model(state = lorenz_state,
                                                parameters = lorenz_parameters,
                                                name = "lorenz")
 
 # Create function for calculating rates
 Lorenz_dydt <-
-  csmdeveloper::csm_render_model(
+  csmbuilder::csm_render_model(
     model = lorenz_model,
     arg_alias = c(parameters = "parms"),
     output_type = "function",

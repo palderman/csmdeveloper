@@ -13,7 +13,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bisection")
   }) |>
@@ -33,7 +33,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bisection")
   }) |>
@@ -53,7 +53,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bisection")
   }) |>
@@ -73,7 +73,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bisection")
   }) |>
@@ -97,7 +97,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "interpolation")
   }) |>
@@ -117,7 +117,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "interpolation")
   }) |>
@@ -137,7 +137,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "interpolation")
   }) |>
@@ -157,7 +157,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "interpolation")
   }) |>
@@ -182,7 +182,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bruteforce")
   }) |>
@@ -202,7 +202,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bruteforce")
   }) |>
@@ -222,7 +222,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bruteforce")
   }) |>
@@ -242,7 +242,7 @@ dummy_variable <- t_ind*2
 
 actual <-
   lapply(t, \(.t){
-    csmdeveloper::csm_get_at_t(dummy_variable, t_ind, t = .t,
+    csmbuilder::csm_get_at_t(dummy_variable, t_ind, t = .t,
                                method = "linear",
                                search = "bruteforce")
   }) |>

@@ -29,11 +29,11 @@ parameters <-
 # Rate equation function
 pheno_vrn_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tt <- csmdeveloper::csm_get_at_t(wth[,2], wth[,1], t, "linear")
+    Tt <- csmbuilder::csm_get_at_t(wth[,2], wth[,1], t, "linear")
     fv <- min(c(cum_vrn/vreq, 1))
     list(c(
-      fv*csmdeveloper::csm_mod_arr(Tt, ko, H, E, To),
-      csmdeveloper::csm_mod_arr(Tt, kv, Hv, Ev, Vo)
+      fv*csmbuilder::csm_mod_arr(Tt, ko, H, E, To),
+      csmbuilder::csm_mod_arr(Tt, kv, Hv, Ev, Vo)
     ))
   })
 }
@@ -49,7 +49,7 @@ wth <-
 # Check mod_arr()
 expect_equal(
   with(as.list(parameters), {
-    csmdeveloper::csm_mod_arr(Vo, kv, Hv, Ev, Vo)
+    csmbuilder::csm_mod_arr(Vo, kv, Hv, Ev, Vo)
   }),
   parameters["kv"],
   info = "mod_arr",
@@ -64,7 +64,7 @@ expect_equal(
                       wth = wth),
   with(as.list(parameters), {
     list(c(0,
-         csmdeveloper::csm_mod_arr(wth[1,2], kv, Hv, Ev, Vo)
+         csmbuilder::csm_mod_arr(wth[1,2], kv, Hv, Ev, Vo)
     ))
   }),
   info = "pheno_vrn_ref_dt(); t=0"
@@ -77,7 +77,7 @@ expect_equal(
                       wth = wth),
   with(as.list(parameters), {
     list(c(0,
-         csmdeveloper::csm_mod_arr(mean(wth[1:2,2]), kv, Hv, Ev, Vo)
+         csmbuilder::csm_mod_arr(mean(wth[1:2,2]), kv, Hv, Ev, Vo)
     ))
   }),
   info = "pheno_vrn_ref_dt(); t=0.5"
@@ -105,21 +105,21 @@ pheno_vrn_ref_out <-
   })
 
 #######################################################
-# Create Phenology Thermal Time Model with csmdeveloper
+# Create Phenology Thermal Time Model with csmbuilder
 #######################################################
 
 # Define state variables
-sp_state <- csmdeveloper::csm_create_state(
+sp_state <- csmbuilder::csm_create_state(
   c("du", "cum_vrn"),
   definition = c("development units",
                  "cumulative vernalization"),
   units = c("physiological days",
             "vernalization days"),
-  expression(~fv*csmdeveloper::csm_mod_arr(Tair, ko, H, E, To),
-             ~csmdeveloper::csm_mod_arr(Tair, kv, Hv, Ev, Vo)))
+  expression(~fv*csmbuilder::csm_mod_arr(Tair, ko, H, E, To),
+             ~csmbuilder::csm_mod_arr(Tair, kv, Hv, Ev, Vo)))
 
 # Define parameters
-sp_parameters <- csmdeveloper::csm_create_parameter(
+sp_parameters <- csmbuilder::csm_create_parameter(
   c("ko", "H", "E", "To", "kv", "Hv", "Ev", "Vo", "vreq"),
   definition = c("relative reaction rate at optimum temperature for primary temperature response",
                  "deactivation energy for primary temperature response",
@@ -138,23 +138,23 @@ sp_parameters <- csmdeveloper::csm_create_parameter(
             "vernalization days"))
 
 # Define weather inputs
-sp_wth_inp <- csmdeveloper::csm_create_transform(
+sp_wth_inp <- csmbuilder::csm_create_transform(
   c("wtime", "Tair"),
   definition = c("time of weather observation",
                  "air temperature"),
   units = c("days after planting",
             "degrees Celcius"),
   equation = c(~wth[,1],
-               ~csmdeveloper::csm_get_at_t(wth[,2], wtime, t, "linear")))
+               ~csmbuilder::csm_get_at_t(wth[,2], wtime, t, "linear")))
 
-sp_wth <- csmdeveloper::csm_create_data_structure(
+sp_wth <- csmbuilder::csm_create_data_structure(
   name = "wth",
   definition = "weather data",
   variables = sp_wth_inp
 )
 
 # Define intermediate factors
-sp_factors <- csmdeveloper::csm_create_transform(
+sp_factors <- csmbuilder::csm_create_transform(
   c("fv"),
   definition = c("vernalization factor"),
   units = c("relative progress towards complete vernalization (0-1)"),
@@ -162,7 +162,7 @@ sp_factors <- csmdeveloper::csm_create_transform(
 
 # Define model
 pheno_vrn_model <-
-  csmdeveloper::csm_create_model(
+  csmbuilder::csm_create_model(
     name = "pheno_vrn",
     state = sp_state,
     parms = sp_parameters,
@@ -171,7 +171,7 @@ pheno_vrn_model <-
 
 # Create function for calculating rates
 pheno_vrn_dydt <-
-  csmdeveloper::csm_render_model(
+  csmbuilder::csm_render_model(
     model = pheno_vrn_model,
     name = "pheno_vrn",
     arg_alias = c(state_variables = "state",

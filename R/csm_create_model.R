@@ -5,11 +5,11 @@
 #' @md
 #'
 #' @param state a list vector containing CSM state
-#'   variables defined using [csmdeveloper::csm_create_state()]
+#'   variables defined using [csmbuilder::csm_create_state()]
 #'   in the intended order
 #' @param ... optional arguments of list vectors containing
-#'   CSM parameters defined using [csmdeveloper::csm_create_parameter()]
-#'   or CSM variables defined using [csmdeveloper::csm_create_variable()]
+#'   CSM parameters defined using [csmbuilder::csm_create_parameter()]
+#'   or CSM variables defined using [csmbuilder::csm_create_variable()]
 #'
 #' @examples
 #'

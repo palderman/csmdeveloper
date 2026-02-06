@@ -12,7 +12,7 @@ csm_create_data_structure(name, definition, variables)
 \item{definition}{the definition of the data structure}
 
 \item{variables}{a list of the CSM variables (as defined with
-[csmdeveloper::csm_create_variable()]) that are contained within the data
+[csmbuilder::csm_create_variable()]) that are contained within the data
  structure}
 }
 \description{

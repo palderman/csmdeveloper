@@ -5,7 +5,7 @@
 #' @param definition the definition of the data structure
 #'
 #' @param variables a list of the CSM variables (as defined with
-#'  [csmdeveloper::csm_create_variable()]) that are contained within the data
+#'  [csmbuilder::csm_create_variable()]) that are contained within the data
 #'   structure
 #'
 #' @examples

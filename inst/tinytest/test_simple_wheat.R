@@ -29,8 +29,8 @@ parameters <-
 # Rate equation function
 swheat_ref_dt <- function(t, state, parms, wth){
   with(as.list(c(state, parms)), {
-    Tavg <- csmdeveloper::csm_get_at_t(wth[,2], wth[,1], t, "linear")
-    SRAD <- csmdeveloper::csm_get_at_t(wth[,3], wth[,1], t, "linear")
+    Tavg <- csmbuilder::csm_get_at_t(wth[,2], wth[,1], t, "linear")
+    SRAD <- csmbuilder::csm_get_at_t(wth[,3], wth[,1], t, "linear")
     c(
       # dTT:
       (Tavg - Tbase)*sig(Tavg+273.15, Tbase+273.15),
@@ -50,7 +50,7 @@ wth <-
   matrix(
     c(seq_along(doy) - 1,
       generate_Tair(doy),
-      csmdeveloper:::solar_radiation(latitude = 36, doy = doy)),
+      csmbuilder:::solar_radiation(latitude = 36, doy = doy)),
     ncol = 3)
 
 colnames(wth) <- c("time", "Tair", "SRAD")
@@ -120,49 +120,49 @@ swheat_ref_out <-
   })
 
 #############################################
-# Create Simple Wheat Model with csmdeveloper
+# Create Simple Wheat Model with csmbuilder
 #############################################
 
 # Define parameters
 swheat_parameters <- c(
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "Tbase",
     definition = "base temperature",
     units = "degree C",
     lower_bound = -273.15),
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "alpha",
     definition = "relative rate of leaf area expansion",
     units = "per degree C",
     lower_bound = 0),
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "K",
     definition = "light extinction coefficient",
     units = "unitless",
     lower_bound = 0),
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "TTL",
     definition = "thermal time to end of leaf expansion",
     units = "degree C",
     lower_bound = 0),
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "senrate",
     definition = "relative rate of leaf senescence",
     units = "per degree C",
     lower_bound = 0),
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "RUE",
     definition = "radiation use efficiency",
     units = "g per MJ",
     lower_bound = 0),
 
-  csmdeveloper::csm_create_parameter(
+  csmbuilder::csm_create_parameter(
     name = "TTM",
     definition = "thermal time to physiological maturity",
     units = "degree C",
@@ -171,27 +171,27 @@ swheat_parameters <- c(
 
 # Define weather inputs
 wth_in <- c(
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     name = "wtime",
     definition = "time of weather observation",
     units = "days after planting",
     ~wth[, 1]),
 
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     name = "Tair",
     definition = "air temperature at time t",
     units = "degree C",
-    ~csmdeveloper::csm_get_at_t(wth[, 2], wth[,1], t, "linear")),
+    ~csmbuilder::csm_get_at_t(wth[, 2], wth[,1], t, "linear")),
 
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     name = "SRAD",
     definition = "solar radiation",
     units = "MJ m^{-2} d^{-1}",
-    ~csmdeveloper::csm_get_at_t(wth[, 3], wth[,1], t, "linear"))
+    ~csmbuilder::csm_get_at_t(wth[, 3], wth[,1], t, "linear"))
 
 )
 
-swheat_wth <- csmdeveloper::csm_create_data_structure(
+swheat_wth <- csmbuilder::csm_create_data_structure(
   "wth",
   definition = "weather data",
   variables = wth_in
@@ -200,7 +200,7 @@ swheat_wth <- csmdeveloper::csm_create_data_structure(
 # Define intermediate factors
 swheat_intermediate <- c(
 
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     name = "f_tt",
     definition = "thermal time factor",
     units = "degree C",
@@ -210,20 +210,20 @@ swheat_intermediate <- c(
 # Define state variables
 swheat_state <- c(
 
-  csmdeveloper::csm_create_state(
+  csmbuilder::csm_create_state(
     name = "TT",
     definition = "cumulative thermal time",
     units = "degree C",
     ~f_tt),
 
-  csmdeveloper::csm_create_state(
+  csmbuilder::csm_create_state(
     name = "LAI",
     definition = "leaf area index",
     units = "leaf area m^{2} ground area m^{-2}",
     ~f_tt*alpha*LAI*exp(-K*LAI)*(1-1/(1+exp(-100*(TT/TTL-1)))) -
       LAI*senrate*f_tt*(1/(1+exp(-100*(TT/TTL-1))))),
 
-  csmdeveloper::csm_create_state(
+  csmbuilder::csm_create_state(
     name = "biomass",
     definition = "biomass",
     units = "g m^{-2}",
@@ -232,14 +232,14 @@ swheat_state <- c(
 )
 
 swheat_model <-
-  csmdeveloper::csm_create_model(
+  csmbuilder::csm_create_model(
     name = "swheat_dydt",
     state = swheat_state,
     prm = swheat_parameters,
     wth = swheat_wth,
     f_inter = swheat_intermediate)
 
-swheat_dydt <- csmdeveloper::csm_render_model(
+swheat_dydt <- csmbuilder::csm_render_model(
     model = swheat_model,
     arg_alias = c(state_variables = "state", parameters = "parms"),
     output_type = "function",

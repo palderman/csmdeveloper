@@ -131,8 +131,8 @@ parameters <-
 # Rate equation function
 dsw_dt <- function(t, state, parms, wth, soil){
   with(as.list(c(state, parms)), {
-    ETo_t <- csmdeveloper::csm_get_at_t(wth[, "ETo"], wth[, "time"], t, "linear")
-    P_t <- csmdeveloper::csm_get_at_t(wth[, "P"], wth[, "time"], t, "linear")
+    ETo_t <- csmbuilder::csm_get_at_t(wth[, "ETo"], wth[, "time"], t, "linear")
+    P_t <- csmbuilder::csm_get_at_t(wth[, "P"], wth[, "time"], t, "linear")
     fi <- 1 - 1/(1+exp(-log(99)/(soil["sw_fc"] - (soil["sw_fc"]*3 + soil["sw_pwp"])/4)*(sw - (soil["sw_fc"]*7/8+soil["sw_pwp"]/8))))
     fe <- 1/(1+exp(-log(99)/(soil["sw_rew"] - soil["sw_tew"])*(sw - soil["sw_rew"])))
     list(
@@ -181,43 +181,43 @@ sw_ref_out <-
   })
 
 ##########################################################
-# Create Simple Soil Water Balance Model with csmdeveloper
+# Create Simple Soil Water Balance Model with csmbuilder
 ##########################################################
 
 # Define state variables
-sw_state <- csmdeveloper::csm_create_state(
+sw_state <- csmbuilder::csm_create_state(
   "sw",
   definition = "soil water",
   units = "mm",
   expression(~P*fi-ETo*Ke*fe))
 
 # Define parameters
-sw_parameters <- csmdeveloper::csm_create_parameter(
+sw_parameters <- csmbuilder::csm_create_parameter(
   "Ke",
   definition = "soil evaporation coefficient",
   units = "unitless")
 
 # Define soil inputs
 sw_soil_vars <- c(
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "sw_fc",
     definition = "soil water at field capacity",
     units = "mm",
     equation = ~soil["sw_fc"]
   ),
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "sw_pwp",
     definition = "soil water at permanent wilting point",
     units = "mm",
     equation = ~soil["sw_pwp"]
   ),
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "sw_rew",
     definition = "soil water at limit of readily extractable water",
     units = "mm",
     equation = ~soil["sw_rew"]
   ),
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "sw_tew",
     definition = "soil water at limit of total extractable water",
     units = "mm",
@@ -227,17 +227,17 @@ sw_soil_vars <- c(
 
 # Define weather variables
 sw_wth_vars <- c(
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "wtime",
     definition = "time of observation",
     units = "days after planting",
     equation = ~wth[,"time"]),
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "ETo",
     definition = "reference evapotranspiration",
     units = "mm",
     equation = ~csm_get_at_t(wth[,"ETo"], wtime, t, "linear")),
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "P",
     definition = "precipitation",
     units = "mm",
@@ -246,12 +246,12 @@ sw_wth_vars <- c(
 
 # Define input data structures
 sw_inputs <- c(
-  csmdeveloper::csm_create_data_structure(
+  csmbuilder::csm_create_data_structure(
     "soil_data",
     definition = "soil data",
     variables = sw_soil_vars
   ),
-  csmdeveloper::csm_create_data_structure(
+  csmbuilder::csm_create_data_structure(
     "wth_data",
     definition = "weather data",
     variables = sw_wth_vars
@@ -260,12 +260,12 @@ sw_inputs <- c(
 
 # Define intermediate factors
 sw_factors <- c(
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "fi",
     definition = "infiltration factor",
   units = "unitless",
   equation = ~1 - 1/(1+exp(-log(99)/(sw_fc - (sw_fc*3 + sw_pwp)/4)*(sw - (sw_fc*7/8+sw_pwp/8))))),
-  csmdeveloper::csm_create_transform(
+  csmbuilder::csm_create_transform(
     "fe",
     definition = "evaporation factor",
     units = "unitless",
@@ -274,14 +274,14 @@ sw_factors <- c(
 
 # Create model object
 sw_model <-
-  csmdeveloper::csm_create_model(sw_state,
+  csmbuilder::csm_create_model(sw_state,
                                  sw_parameters,
                                  sw_factors,
                                  sw_inputs)
 
 # Create function for calculating rates
 sw_dydt <-
-  csmdeveloper::csm_render_model(
+  csmbuilder::csm_render_model(
     name = "sw",
     model = sw_model,
     arg_alias = c(state_variables = "state",

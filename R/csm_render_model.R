@@ -5,7 +5,7 @@
 #' @md
 #'
 #' @param model a list vector containing a CSM as created by
-#'  [csmdeveloper::csm_create_model()]
+#'  [csmbuilder::csm_create_model()]
 #'
 #' @param output_type a character value indicating the type of output to produce;
 #'   one of: "function" (a callable function) or "code" (computer code for the

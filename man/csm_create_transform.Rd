@@ -22,7 +22,7 @@ Create a cropping systems model (CSM) transformed variable
 
 # Define intermediate factor
 
-sp_factors <- csmdeveloper::csm_create_transform(
+sp_factors <- csmbuilder::csm_create_transform(
   name = "fv",
   definition = "vernalization factor",
   units = "relative progress towards complete vernalization (0-1)",

@@ -7,8 +7,8 @@
 csm_render_model(
   model,
   name = "dy_dt",
-  output_type = c("Rfunction", "RCode", "deSolveRFunction", "deSolveRCode",
-    "deSolveRcppFunction", "deSolveRcppCode", "deSolveFortranCode"),
+  output_type = c("function", "code"),
+  language = c("R", "Rcpp"),
   arg_alias = NULL,
   insert_functions = NULL
 )
@@ -19,7 +19,12 @@ csm_render_model(
 
 \item{name}{name of the resulting function}
 
-\item{output_type}{a character value indicating the type of output to produce}
+\item{output_type}{a character value indicating the type of output to produce;
+one of: "function" (a callable function) or "code" (computer code for the
+model)}
+
+\item{language}{a character value indicating which programming language into
+which to render the model}
 
 \item{arg_alias}{an optional named character vector whose names indicate
 variables for which to use an alias within the generated function and whose
@@ -55,21 +60,18 @@ lotka_volterra_model <-
     state = lv_state,
     parms = lv_parameters)
 
-# Render model into R function for calculating rate of change
-lotka_volterra_dydt <-
-  csm_render_model(lotka_volterra_model,
-                   arg_alias = c(parameters = "parms"))
-
 # Render model into raw R code
 lotka_volterra_code <-
   csm_render_model(lotka_volterra_model,
                    arg_alias = c(parameters = "parms"),
-                   output_type = "Rcode")
+                   output_type = "code",
+                   language = "R")
 
-# Render model into R function compatible with deSolve package
-lotka_volterra_deSolve <-
+# Render model into a callable R function
+lotka_volterra_fun <-
   csm_render_model(lotka_volterra_model,
                    arg_alias = c(parameters = "parms"),
-                   output_type = "deSolve")
+                   output_type = "function",
+                   language = "R")
 
 }

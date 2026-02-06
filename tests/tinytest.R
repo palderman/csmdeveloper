@@ -1,6 +1,6 @@
 
 if ( requireNamespace("tinytest", quietly=TRUE) &
      requireNamespace("deSolve", quietly=TRUE) ){
-  tinytest::test_package("csmdeveloper")
+  tinytest::test_package("csmbuilder")
 }
 

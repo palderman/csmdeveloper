@@ -49,18 +49,18 @@ lotka_volt_ref_out <-
   })
 
 #########################################
-# Create Lotka-Volterra with csmdeveloper
+# Create Lotka-Volterra with csmbuilder
 #########################################
 
 # Define state variables
-lv_state <- csmdeveloper::csm_create_state(
+lv_state <- csmbuilder::csm_create_state(
   c("x", "y"),
   definition = c("prey", "predator"),
   units = c("rabbits per square km", "foxes per square km"),
   expression(~alpha*x-beta*x*y, ~delta*x*y-gamma*y))
 
 # Define parameters
-lv_parameters <- csmdeveloper::csm_create_parameter(
+lv_parameters <- csmbuilder::csm_create_parameter(
   c("alpha", "beta", "gamma", "delta"),
   definition = c("maximum prey per capita growth rate",
                  "effect of predator population on prey death rate",
@@ -71,12 +71,12 @@ lv_parameters <- csmdeveloper::csm_create_parameter(
 
 # Define model
 lotka_volt_model <-
-  csmdeveloper::csm_create_model(
+  csmbuilder::csm_create_model(
     state = lv_state,
     parms = lv_parameters)
 
 # Create function for calculating rates
-lotka_volt_dydt <- csmdeveloper::csm_render_model(lotka_volt_model,
+lotka_volt_dydt <- csmbuilder::csm_render_model(lotka_volt_model,
                                                   arg_alias = c(parameters = "parms"),
                                                   output_type = "function",
                                                   language = "R")
