@@ -1,3 +1,4 @@
+- Adapt run_sim() from inference example to incorporate into package
 - Update package documentation to meet CRAN requirements
 - Add helper functions to run simulations
     - Add as an additional output type for csm_render_model()?
