@@ -49,7 +49,7 @@ wth <-
 # Check mod_arr()
 expect_equal(
   with(as.list(parameters), {
-    mod_arr(Vo, kv, Hv, Ev, Vo)
+    csmdeveloper::csm_mod_arr(Vo, kv, Hv, Ev, Vo)
   }),
   parameters["kv"],
   info = "mod_arr",
@@ -64,7 +64,7 @@ expect_equal(
                       wth = wth),
   with(as.list(parameters), {
     list(c(0,
-         mod_arr(wth[1,2], kv, Hv, Ev, Vo)
+         csmdeveloper::csm_mod_arr(wth[1,2], kv, Hv, Ev, Vo)
     ))
   }),
   info = "pheno_vrn_ref_dt(); t=0"
@@ -77,7 +77,7 @@ expect_equal(
                       wth = wth),
   with(as.list(parameters), {
     list(c(0,
-         mod_arr(mean(wth[1:2,2]), kv, Hv, Ev, Vo)
+         csmdeveloper::csm_mod_arr(mean(wth[1:2,2]), kv, Hv, Ev, Vo)
     ))
   }),
   info = "pheno_vrn_ref_dt(); t=0.5"

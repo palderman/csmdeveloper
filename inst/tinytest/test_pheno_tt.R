@@ -64,7 +64,7 @@ expect_equal(
                       parms = parameters,
                       wth = wth),
   with(as.list(parameters), {
-    list(mod_arr(mean(wth[1:2,2]), ko, H, E, To))
+    list(csmdeveloper::csm_mod_arr(mean(wth[1:2,2]), ko, H, E, To))
   }),
   info = "pheno_tt_ref_dt(); t=0.5"
 )
