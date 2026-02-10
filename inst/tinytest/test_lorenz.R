@@ -27,7 +27,7 @@ Lorenz_ref_dt <- function(t, state, parameters) {
   }
 
 # Specify times at which to report output
-times <- seq(0, 100, by = 0.01)
+times <- csmbuilder::csm_time_vector(0, 100, dt = 0.01)
 
 # Create list of integration methods to test:
 integ_list <- c("euler", "rk4", "ode23", "ode45")
@@ -83,10 +83,10 @@ Lorenz_dydt_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    deSolve::ode(
-      y = state,
-      times = times,
-      func = Lorenz_dydt,
+    csmbuilder::csm_run_sim(
+      model_function = Lorenz_dydt,
+      y_init = state,
+      t = times,
       parms = parameters,
       method = .method
     )

@@ -50,14 +50,12 @@
 #' # Render model into raw R code
 #' lotka_volterra_code <-
 #'   csm_render_model(lotka_volterra_model,
-#'                    arg_alias = c(parameters = "parms"),
 #'                    output_type = "code",
 #'                    language = "R")
 #'
 #' # Render model into a callable R function
 #' lotka_volterra_fun <-
 #'   csm_render_model(lotka_volterra_model,
-#'                    arg_alias = c(parameters = "parms"),
 #'                    output_type = "function",
 #'                    language = "R")
 #'
@@ -114,7 +112,7 @@ csm_render_model <- function(
 
   arg_names <- c(
     state_variables = "state_variables",
-    parameters = if(!is.null(model$parameters)) "parameters",
+    parameters = if(!is.null(model$parameters)) "parms",
     setNames(nm = names(model$input_variables)),
     setNames(nm = names(model$data_structures))
   )

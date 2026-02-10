@@ -99,7 +99,7 @@ expect_equal(
 )
 
 # Specify times at which to report output
-times <- seq(0, nrow(wth)-1, by = 0.01)
+times <- csmbuilder::csm_time_vector(0, nrow(wth)-1, dt = 0.01)
 
 # Create list of integration methods to test:
 integ_list <- c("euler", "rk4")
@@ -241,7 +241,7 @@ swheat_model <-
 
 swheat_dydt <- csmbuilder::csm_render_model(
     model = swheat_model,
-    arg_alias = c(state_variables = "state", parameters = "parms"),
+    arg_alias = c(state_variables = "state"),
     output_type = "function",
     language = "R"
   )
@@ -251,10 +251,10 @@ swheat_dydt_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    deSolve::ode(
-      y = state,
-      times = times,
-      func = swheat_dydt,
+    csmbuilder::csm_run_sim(
+      model_function = swheat_dydt,
+      y_init = state,
+      t = times,
       parms = parameters,
       wth = wth,
       method = .method

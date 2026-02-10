@@ -29,7 +29,7 @@ lotka_volt_ref_dt <- function(t, state, parms){
 }
 
 # Specify times at which to report output
-times <- seq(0, 100, by = 0.01)
+times <- csmbuilder::csm_time_vector(0, 100, dt = 0.01)
 
 # Create list of integration methods to test:
 integ_list <- c("euler", "rk4", "ode23", "ode45")
@@ -73,11 +73,10 @@ lv_parameters <- csmbuilder::csm_create_parameter(
 lotka_volt_model <-
   csmbuilder::csm_create_model(
     state = lv_state,
-    parms = lv_parameters)
+    parameters = lv_parameters)
 
 # Create function for calculating rates
 lotka_volt_dydt <- csmbuilder::csm_render_model(lotka_volt_model,
-                                                  arg_alias = c(parameters = "parms"),
                                                   output_type = "function",
                                                   language = "R")
 
@@ -86,10 +85,10 @@ lotka_volt_dydt_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    ode(
-      y = state,
-      times = times,
-      func = lotka_volt_dydt,
+    csmbuilder::csm_run_sim(
+      model_function = lotka_volt_dydt,
+      y_init = state,
+      t = times,
       parms = parameters,
       method = .method
     )

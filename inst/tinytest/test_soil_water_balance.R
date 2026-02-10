@@ -159,7 +159,7 @@ expect_equal(
 )
 
 # Specify times at which to report output
-times <- seq(0, nrow(wth)-1, by = 0.01)
+times <- csmbuilder::csm_time_vector(0, nrow(wth)-1, dt = 0.01)
 
 # Create list of integration methods to test:
 integ_list <- c("euler", "rk4")
@@ -285,7 +285,6 @@ sw_dydt <-
     name = "sw",
     model = sw_model,
     arg_alias = c(state_variables = "state",
-                  parameters = "parms",
                   soil_data = "soil",
                   wth_data = "wth"),
     output_type = "function",
@@ -296,10 +295,10 @@ sw_dydt_out <-
   integ_list |>
   (\(.x) setNames(.x, .x))() |>
   lapply(\(.method){
-    deSolve::ode(
-      y = state,
-      times = times,
-      func = sw_dydt,
+    csmbuilder::csm_run_sim(
+      model_function = sw_dydt,
+      y_init = state,
+      t = times,
       parms = parameters,
       wth = wth,
       soil = soil,
