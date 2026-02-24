@@ -7,9 +7,12 @@
 #' @param state a list vector containing CSM state
 #'   variables defined using [csmbuilder::csm_create_state()]
 #'   in the intended order
+#'
 #' @param ... optional arguments of list vectors containing
 #'   CSM parameters defined using [csmbuilder::csm_create_parameter()]
 #'   or CSM variables defined using [csmbuilder::csm_create_variable()]
+#'
+#' @param name a character string containing a name for the models
 #'
 #' @examples
 #'

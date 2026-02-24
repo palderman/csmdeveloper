@@ -19,7 +19,7 @@
 #'
 csm_create_transform <- function(name, definition, units, equation){
 
-  if(class(equation) == "formula") equation <- c(equation)
+  if(inherits(equation, "formula")) equation <- c(equation)
 
   stopifnot(length(name) == length(definition))
   stopifnot(length(name) == length(units))

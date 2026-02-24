@@ -42,12 +42,6 @@
 #'     state = lv_state,
 #'     parms = lv_parameters)
 #'
-#' # Render model into raw R code
-#' lotka_volterra_code <-
-#'   csm_render_model(lotka_volterra_model,
-#'                    output_type = "code",
-#'                    language = "R")
-#'
 #' # Render model into a callable R function
 #' lotka_volterra_fun <-
 #'   csm_render_model(lotka_volterra_model,

@@ -113,8 +113,8 @@ csm_render_model <- function(
   arg_names <- c(
     state_variables = "state_variables",
     parameters = if(!is.null(model$parameters)) "parms",
-    setNames(nm = names(model$input_variables)),
-    setNames(nm = names(model$data_structures))
+    stats::setNames(nm = names(model$input_variables)),
+    stats::setNames(nm = names(model$data_structures))
   )
 
   arg_regex <- paste0("^", names(arg_alias), "$")
@@ -248,7 +248,8 @@ csm_render_model <- function(
       parse(text = dydt_output) |>
       eval()
   }else if(output_type == "function" &
-           language == "Rcpp"){
+           language == "Rcpp" &
+           requireNamespace("Rcpp", quietly = TRUE)){
     Rcpp::sourceCpp(code = dydt_output)
   }
 

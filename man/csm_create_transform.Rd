@@ -9,6 +9,9 @@ csm_create_transform(name, definition, units, equation)
 \arguments{
 \item{name}{a length-one character vector name of a variable}
 
+\item{definition}{a length-one character vector that defines
+the CSM variable}
+
 \item{units}{a length-one character vector of the units of
 the CSM variable}
 

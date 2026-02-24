@@ -14,6 +14,8 @@ in the intended order}
 \item{...}{optional arguments of list vectors containing
 CSM parameters defined using \code{\link[=csm_create_parameter]{csm_create_parameter()}}
 or CSM variables defined using \code{\link[=csm_create_variable]{csm_create_variable()}}}
+
+\item{name}{a character string containing a name for the models}
 }
 \description{
 Create a model definition for a Cropping System Model (CSM)
