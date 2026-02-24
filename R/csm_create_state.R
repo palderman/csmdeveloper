@@ -5,6 +5,9 @@
 #' @param equation an R expression with the equation
 #'  for the rate of change of the CSM state variable
 #'
+#' @returns
+#' a list of csm_state objects
+#'
 #' @export
 #'
 #' @examples

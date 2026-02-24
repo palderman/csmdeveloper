@@ -22,6 +22,11 @@
 #'
 #' @param insert_functions an optional list of functions to add to rendered code
 #'
+#' @returns
+#' Either an R function object (if `output_type`="function") or a character
+#' vector of model code (if `output_type`="code") in the programming language
+#' specified by `language`.
+#'
 #' @examples
 #'
 #' # Define state variables

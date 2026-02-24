@@ -32,6 +32,11 @@ elements provide the corresponding alias}
 
 \item{insert_functions}{an optional list of functions to add to rendered code}
 }
+\value{
+Either an R function object (if \code{output_type}="function") or a character
+vector of model code (if \code{output_type}="code") in the programming language
+specified by \code{language}.
+}
 \description{
 Render a defined Cropping System Model (CSM)
 }

@@ -18,6 +18,9 @@ the CSM variable}
 \item{equation}{an R expression with the equation
 for the rate of change of the CSM state variable}
 }
+\value{
+a list of csm_state objects
+}
 \description{
 Create a cropping systems model (CSM) state variable
 }

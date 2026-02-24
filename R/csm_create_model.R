@@ -14,6 +14,10 @@
 #'
 #' @param name a character string containing a name for the models
 #'
+#' @returns
+#' a list which defines all components of a model including state variables,
+#' input variables, parameters, transformed variables and data structures.
+#'
 #' @examples
 #'
 #' # Define state variables

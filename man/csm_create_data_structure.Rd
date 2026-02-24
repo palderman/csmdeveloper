@@ -15,6 +15,9 @@ csm_create_data_structure(name, definition, variables)
 [csmbuilder::csm_create_variable()]) that are contained within the data
  structure}
 }
+\value{
+a list of `csm_data_structure` objects
+}
 \description{
 Create a cropping systems model (CSM) data structure
 }

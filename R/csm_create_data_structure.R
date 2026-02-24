@@ -8,6 +8,9 @@
 #'  [csmbuilder::csm_create_variable()]) that are contained within the data
 #'   structure
 #'
+#' @returns
+#' a list of `csm_data_structure` objects
+#'
 #' @examples
 #'
 #' # Create variables:

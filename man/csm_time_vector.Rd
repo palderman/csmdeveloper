@@ -16,6 +16,9 @@ use for simulation}
 \item{dt}{a numerical value providing the size of the time step to
 use for simulation}
 }
+\value{
+a numeric vector
+}
 \description{
 Generate vector of times for simulation
 }

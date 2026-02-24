@@ -5,6 +5,9 @@
 #' @param equation an R expression with the equation
 #'  for the value of the transformed CSM state variable
 #'
+#' @returns
+#' a list of csm_transform objects
+#'
 #' @examples
 #'
 #' # Define intermediate factor

@@ -18,6 +18,9 @@ the CSM variable}
 \item{equation}{an R expression with the equation
 for the value of the transformed CSM state variable}
 }
+\value{
+a list of csm_transform objects
+}
 \description{
 Create a cropping systems model (CSM) transformed variable
 }

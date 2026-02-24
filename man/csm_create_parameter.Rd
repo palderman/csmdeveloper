@@ -27,6 +27,9 @@ bound for the parameter}
 \item{upper_bound}{a numerical value providing the upper
 bound for the parameter}
 }
+\value{
+a list of csm_parameter objects
+}
 \description{
 Create a cropping systems model (CSM) parameter variable
 }

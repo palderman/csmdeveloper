@@ -20,6 +20,9 @@ are desired}
 \item{method}{numerical integration method to be used. See \code{\link[deSolve:ode]{deSolve::ode()}}
 for more details}
 }
+\value{
+a data frame with one row for each time point specified by \code{t}
+}
 \description{
 Run a Cropping System Model (CSM) simulation
 }

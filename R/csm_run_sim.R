@@ -17,6 +17,9 @@
 #' @param method numerical integration method to be used. See [deSolve::ode()]
 #'  for more details
 #'
+#' @returns
+#' a data frame with one row for each time point specified by `t`
+#'
 #' @examples
 #'
 #' # Define state variables

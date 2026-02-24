@@ -1,10 +1,15 @@
 #' Create a cropping systems model (CSM) variable
 #'
 #' @param name a length-one character vector name of a variable
+#'
 #' @param definition a length-one character vector that defines
 #'   the CSM variable
+#'
 #' @param units a length-one character vector of the units of
 #'   the CSM variable
+#'
+#' @returns
+#' a list of csm_variable objects
 #'
 #' @examples
 #'

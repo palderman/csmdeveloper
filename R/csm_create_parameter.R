@@ -7,6 +7,9 @@
 #' @param upper_bound a numerical value providing the upper
 #'   bound for the parameter
 #'
+#' @returns
+#' a list of csm_parameter objects
+#'
 #' @examples
 #' # Define Lotka-Voterra parameters with single call
 #'

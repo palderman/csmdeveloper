@@ -15,6 +15,9 @@ the CSM variable}
 \item{units}{a length-one character vector of the units of
 the CSM variable}
 }
+\value{
+a list of csm_variable objects
+}
 \description{
 Create a cropping systems model (CSM) variable
 }

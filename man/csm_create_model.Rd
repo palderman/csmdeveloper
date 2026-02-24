@@ -17,6 +17,10 @@ or CSM variables defined using \code{\link[=csm_create_variable]{csm_create_vari
 
 \item{name}{a character string containing a name for the models}
 }
+\value{
+a list which defines all components of a model including state variables,
+input variables, parameters, transformed variables and data structures.
+}
 \description{
 Create a model definition for a Cropping System Model (CSM)
 }
