@@ -8,7 +8,23 @@
 
 ## R CMD check results
 
-There were no ERRORs, WARNINGs or NOTEs.
+There were no ERRORs or WARNINGs.
+
+There was one NOTE:
+
+Maintainer: 'Phillip D Alderman <phillip.alderman@okstate.edu>'
+
+New submission
+
+Found the following (possibly) invalid DOIs:
+  DOI: 10.32614/CRAN.package.csmbuilder
+    From: inst/CITATION
+    Status: 404
+    Message: Not Found
+
+The "invalid DOI" is due to the package not being on CRAN yet. Once
+the package is posted and the new DOI minted this issue will be
+resolved.
 
 ## Downstream dependencies
 
