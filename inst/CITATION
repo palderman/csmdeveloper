@@ -1,0 +1,19 @@
+year <- sub("-.*","",meta$Date)
+note <- sprintf("R package version %s.", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{csmbuilder:} A collection of tools for building cropping system models",
+         author = c(person(c("Phillip","D"),"Alderman"),
+                    person("Pratishtha","Poudel")),
+         year = year,
+         note = note,
+         doi = "10.32614/CRAN.package.csmbuilder",
+         url = "https://CRAN.R-project.org/package=csmbuilder",
+         textVersion = paste("Alderman, P.D. and P. Poudel.",
+         paste0(year, "."),
+         "csmbuilder: A collection of tools for building cropping system models",
+         ".",
+         note,
+         "DOI: 10.32614/CRAN.package.csmbuilder.",
+         "https://CRAN.R-project.org/package=csmbuilder.")
+)
