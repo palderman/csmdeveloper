@@ -7,4 +7,5 @@ src
 dydt.cpp
 cran-comments.md
 .github
+NEWS.md
 
