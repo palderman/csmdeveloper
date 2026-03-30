@@ -4,6 +4,9 @@
 #'
 #' @param x any R object
 #'
+#' @returns
+#' a logical value indicating whether or not x is of class csm_state
+#'
 is_state_variable <- function(x){
   "csm_state" %in% class(x)
 }
@@ -13,6 +16,9 @@ is_state_variable <- function(x){
 #' @export
 #'
 #' @param x any R object
+#'
+#' @returns
+#' a logical value indicating whether or not x is an input variable
 #'
 is_input <- function(x){
   "csm_variable" %in% class(x) &
@@ -25,6 +31,9 @@ is_input <- function(x){
 #'
 #' @param x any R object
 #'
+#' @returns
+#' a logical value indicating whether or not x is of class csm_parameter
+#'
 is_parameter <- function(x){
   "csm_parameter" %in% class(x)
 }
@@ -35,6 +44,9 @@ is_parameter <- function(x){
 #'
 #' @param x any R object
 #'
+#' @returns
+#' a logical value indicating whether or not x is of class csm_transform
+#'
 is_transform <- function(x){
   "csm_transform" %in% class(x)
 }
@@ -44,6 +56,9 @@ is_transform <- function(x){
 #' @export
 #'
 #' @param x any R object
+#'
+#' @returns
+#' a logical value indicating whether or not x is of class csm_data_structure
 #'
 is_data_structure <- function(x){
   "csm_data_structure" %in% class(x)
@@ -245,6 +260,9 @@ clear_sky_radiation <- function(Ra, a_s, b_s, elevation){
 #'  finding the correct indices within t_ind. One of: "bisection",
 #'  "interpolation"
 #'
+#' @returns
+#' the numeric value of the time-varying variable interpolated at time t
+#'
 csm_get_at_t <- function(x, t_ind, t,
                          method = "linear",
                          search = c("interpolation", "bisection",
@@ -352,6 +370,9 @@ csm_get_at_t <- function(x, t_ind, t,
 #' @param H deactivation energy parameter
 #' @param E activation energy parameter
 #' @param To optimum temperature in Celsius
+#'
+#' @returns
+#' a numeric value of the reaction rate at temperature Tt
 #'
 csm_mod_arr <- function(Tt, ko, H, E, To){
   R <- 8.314

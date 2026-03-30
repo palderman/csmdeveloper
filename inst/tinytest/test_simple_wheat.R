@@ -9,7 +9,7 @@ generate_Tair <- function(doy = NULL){
   15*cos((doy-200)/365*2*pi)+15
 }
 
-sig <<- function(x, y){
+sig <- function(x, y){
   1/(1 + exp(-100*(x/y - 1)))
 }
 
@@ -268,5 +268,3 @@ for(integ_method in integ_list){
     info = integ_method
   )
 }
-
-rm("sig", envir = .GlobalEnv)

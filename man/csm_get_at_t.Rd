@@ -26,6 +26,9 @@ interpolation. One of: "linear"}
 finding the correct indices within t_ind. One of: "bisection",
 "interpolation"}
 }
+\value{
+the numeric value of the time-varying variable interpolated at time t
+}
 \description{
 Linearly interpolate a time-varying variable at specific time point
 }

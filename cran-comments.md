@@ -1,10 +1,18 @@
+## Changes in response to feedback from previous CRAN review:
+
+* Added two additional sentences to package Description field
+* Added \value{} for csm_get_at_t.Rd, csm_mod_arr.Rd,
+  is_data_structure.Rd, is_input.Rd, is_parameter.Rd,
+  is_state_variable.Rd and is_transform.Rd
+* Removed "<<-" from inst/tinytest/test_simple_wheat.R
+
 ## Test environments
 
 * local Ubuntu 22.04.5 LTS, R 4.5.2, GCC
 * win-builder (devel and release)
-* RHub macos-15 on GitHub (R-devel)
-* RHub windows (R-devel)
-* RHub Fedora Linux 38 (R-devel)
+* mac-builder (release)
+* RHub windows on GitHub (R-devel)
+* RHub Fedora Linux 38 on Github (R-devel)
 
 ## R CMD check results
 

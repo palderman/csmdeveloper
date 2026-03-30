@@ -17,6 +17,9 @@ csm_mod_arr(Tt, ko, H, E, To)
 
 \item{To}{optimum temperature in Celsius}
 }
+\value{
+a numeric value of the reaction rate at temperature Tt
+}
 \description{
 Modified Arrhenius function
 }

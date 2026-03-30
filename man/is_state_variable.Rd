@@ -9,6 +9,9 @@ is_state_variable(x)
 \arguments{
 \item{x}{any R object}
 }
+\value{
+a logical value indicating whether or not x is of class csm_state
+}
 \description{
 Determine if object is state variable
 }

@@ -10,7 +10,11 @@ Authors@R:c(
            role = "aut"))
 Description: A collection of tools for designing, implementing,
     testing, documenting and visualizing dynamic simulation
-    cropping system models.
+    cropping system models. Models are specified as a combination of
+    state variables, parameters, intermediate factors and input data that
+    define a system of ordinary differential equations. Specified models
+    can be used to simulate dynamic processes using numerical
+    integration algorithms.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

@@ -9,6 +9,9 @@ is_transform(x)
 \arguments{
 \item{x}{any R object}
 }
+\value{
+a logical value indicating whether or not x is of class csm_transform
+}
 \description{
 Determine if object is a transformed variable
 }
