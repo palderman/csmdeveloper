@@ -1,5 +1,9 @@
 
-# csmbuilder 0.1.0
+# csmbuilder v0.1.0.9000
+
+- Adding Hill equation utility functions for up/down-regulation
+
+# csmbuilder v0.1.0
 
 - Release of first complete version of package!
 

@@ -1,7 +1,7 @@
 Package: csmbuilder
 Type: Package
 Title: A Collection of Tools for Building Cropping System Models
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R:c(
     person(c("Phillip", "D"), "Alderman",
            email = "phillip.alderman@okstate.edu",

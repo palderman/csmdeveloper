@@ -379,6 +379,38 @@ csm_mod_arr <- function(Tt, ko, H, E, To){
   ko*(H*exp(E/R*(1/(To+273.15)-1/(Tt + 273.15))))/(H - E*(1-exp(H/R*(1/(To+273.15)-1/(Tt + 273.15)))))
 }
 
+#' Hill equation for up-regulation
+#'
+#' @export
+#'
+#' @param L a numeric value providing the ligand concentration
+#' @param K a numeric value providing the ligand concentration at half occupation
+#' @param n a numeric value providing the Hill coefficient
+#'
+#' @returns
+#' a numeric value between 0 and 1
+#'
+csm_hill_up_reg <- function(L, K, n){
+  L_n <- L**n
+  L_n/(L_n + K**n)
+}
+
+#' Hill equation for down-regulation
+#'
+#' @export
+#'
+#' @param L a numeric value providing the ligand concentration
+#' @param K a numeric value providing the ligand concentration at half occupation
+#' @param n a numeric value providing the Hill coefficient
+#'
+#' @returns
+#' a numeric value between 0 and 1
+#'
+csm_hill_down_reg <- function(L, K, n){
+  K_n <- K**n
+  K_n/(K_n + L**n)
+}
+
 #' @noRd
 generate_ETo <- function(doy, lat, method = "Hargreaves", ...){
   dot_args <- list(...)
