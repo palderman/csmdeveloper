@@ -7,4 +7,9 @@
 - Probably for later package version: Come up with some way to implicitly
   add time-specific intermediate variables for use in equations of
   transformed/state variables
-
+- Overload "+" to allow "adding" sub-models together
+- Add internal checks for duplicated variable names, no undefined variables, etc
+- Add function to construct dependency graph of all variables/expressions in the
+  model for ordering variables/expressions in rendered model
+- Complete csm_document_model() with output types for: table of variables,
+  LaTeX equations and associated explanatory text definitions, etc.
