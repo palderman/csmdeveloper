@@ -111,15 +111,15 @@ csm_run_sim_group <- function(model_function,
     not_list <- names(.args)[!.arg_is_list]
     not_list |>
       paste0(collapse = ", ") |>
-      gsub(", ([^, ])$", " and \\1") |>
-      paste0(if(length(not_list) > 1) " are " else " is ", " not of list type. ") |>
+      gsub(", ([^, ])$", " and \\1", x = _) |>
+      paste0(if(length(not_list) > 1) " are " else " is ", "not of list type.") |>
       stop()
   }
 
   if(!all(.arg_lengths == 1 | .arg_lengths == max(.arg_lengths))){
     {names(.args)[.arg_lengths != max(.arg_lengths) & .arg_lengths != 1]} |>
       paste0(collapse = ", ") |>
-      gsub(", ([^, ])$", " and \\1") |>
+      gsub(", ([^, ])$", " and \\1", x = _) |>
       paste0(" have differing lengths. They must be of the same length or have length 1.") |>
       stop()
   }
