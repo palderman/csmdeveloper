@@ -137,11 +137,13 @@ csm_run_sim_group <- function(model_function,
       unlist()
     sim_out <-
       do.call(rbind, args = sim_out) |>
-      cbind(
-        data.frame(
-          sim_no = seq_along(sim_out) |>
-            rep(times = n_rows)),
-        y = _)
+      as.data.frame() |>
+      rev() |>
+      c(sim_no = seq_along(sim_out) |>
+          rep(times = n_rows) |>
+          list()) |>
+      rev() |>
+      data.frame(check.names = FALSE)
   }
 
   sim_out
