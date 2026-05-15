@@ -1,7 +1,10 @@
 
-# csmbuilder v0.1.0.9000
+# csmbuilder v0.1.0.9001
 
-- Adding Hill equation utility functions for up/down-regulation
+- Adding Hill equation utility functions for up/down-regulation:
+  - csm_hill_up_reg()
+  - csm_hill_down_reg()
+- Adding a function for running a group of simulations: csm_run_sim_group()
 
 # csmbuilder v0.1.0
 
