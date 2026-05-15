@@ -8,3 +8,5 @@ dydt.cpp
 cran-comments.md
 .github
 ^CRAN-SUBMISSION$
+^\.positai$
+^\.claude$
