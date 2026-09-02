@@ -1,4 +1,9 @@
 
+# csmbuilder v0.1.0.9002
+
+- Add n_dim argument to csm_create_data_structure() for specifying the dimensions
+  of a data structure
+
 # csmbuilder v0.1.0.9001
 
 - Adding Hill equation utility functions for up/down-regulation:

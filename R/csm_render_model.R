@@ -353,15 +353,19 @@ get_declaration <- function(.d, dots_list, arg_names, v_types,
 
     .v <- attr(dots_list[[.d]], "variables")
 
-    v_indices <- seq_along(.v) + v_base_adj
+    .n_dim <- attr(dots_list[[.d]], "n_dim")
+
+    v_indices <-
+      {seq_along(.v) + v_base_adj} |>
+      paste0(rep(",", .n_dim - 1), x = _)
 
     mapply(dydt_declaration,
            .i = v_indices,
            .name = names(.v),
            .var = .v,
-           .var_type = v_types["scalar"],
-           .in = "",
-           .in_type = v_types["scalar"],
+           .var_type = v_types["array"],
+           .in = get_arg_name(.d, dots_list, arg_names),
+           .in_type = v_types["array"],
            .comment_char = comment_char,
            .line_end = line_end,
            declare_v_type = declare_v_type,

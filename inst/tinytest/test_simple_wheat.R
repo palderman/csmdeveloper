@@ -171,31 +171,44 @@ swheat_parameters <- c(
 
 # Define weather inputs
 wth_in <- c(
-  csmbuilder::csm_create_transform(
+  csmbuilder::csm_create_variable(
     name = "wtime",
     definition = "time of weather observation",
-    units = "days after planting",
-    ~wth[, 1]),
+    units = "days after planting"),
 
-  csmbuilder::csm_create_transform(
+  csmbuilder::csm_create_variable(
     name = "Tair",
     definition = "air temperature at time t",
-    units = "degree C",
-    ~csmbuilder::csm_get_at_t(wth[, 2], wth[,1], t, "linear")),
+    units = "degree C"),
 
-  csmbuilder::csm_create_transform(
+  csmbuilder::csm_create_variable(
     name = "SRAD",
     definition = "solar radiation",
-    units = "MJ m^{-2} d^{-1}",
-    ~csmbuilder::csm_get_at_t(wth[, 3], wth[,1], t, "linear"))
+    units = "MJ m^{-2} d^{-1}")
 
 )
 
 swheat_wth <- csmbuilder::csm_create_data_structure(
   "wth",
   definition = "weather data",
-  variables = wth_in
+  variables = wth_in,
+  n_dim = 2
 )
+
+swheat_wth_t <- c(
+  csmbuilder::csm_create_transform(
+    name = "Tair_t",
+    definition = "air temperature at t",
+    units = "degrees Celsius",
+    equation = ~csmbuilder::csm_get_at_t(Tair, wtime, t, "linear")),
+
+  csmbuilder::csm_create_transform(
+    name = "SRAD_t",
+    definition = "solar radiation at t",
+    units = "MJ m^{-2} d^{-1}",
+    equation = ~csmbuilder::csm_get_at_t(SRAD, wtime, t, "linear"))
+)
+
 
 # Define intermediate factors
 swheat_intermediate <- c(
@@ -204,7 +217,7 @@ swheat_intermediate <- c(
     name = "f_tt",
     definition = "thermal time factor",
     units = "degree C",
-    ~(Tair - Tbase)/(1+exp(-100*((Tair + 273.15)/(Tbase + 273.15)-1))))
+    ~(Tair_t - Tbase)/(1+exp(-100*((Tair_t + 273.15)/(Tbase + 273.15)-1))))
 )
 
 # Define state variables
@@ -227,7 +240,7 @@ swheat_state <- c(
     name = "biomass",
     definition = "biomass",
     units = "g m^{-2}",
-    ~RUE*SRAD*(1-exp(-K*LAI))*f_tt*(1-1/(1+exp(-100*(TT/TTM-1)))))
+    ~RUE*SRAD_t*(1-exp(-K*LAI))*f_tt*(1-1/(1+exp(-100*(TT/TTM-1)))))
 
 )
 
@@ -237,6 +250,7 @@ swheat_model <-
     state = swheat_state,
     prm = swheat_parameters,
     wth = swheat_wth,
+    wth_t = swheat_wth_t,
     f_inter = swheat_intermediate)
 
 swheat_dydt <- csmbuilder::csm_render_model(

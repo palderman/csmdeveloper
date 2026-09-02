@@ -4,7 +4,7 @@
 \alias{csm_create_data_structure}
 \title{Create a cropping systems model (CSM) data structure}
 \usage{
-csm_create_data_structure(name, definition, variables)
+csm_create_data_structure(name, definition, variables, n_dim = 1)
 }
 \arguments{
 \item{name}{a length-one character vector name of a variable}
@@ -14,6 +14,9 @@ csm_create_data_structure(name, definition, variables)
 \item{variables}{a list of the CSM variables (as defined with
 [csmbuilder::csm_create_variable()]) that are contained within the data
  structure}
+
+\item{n_dim}{the number of dimensions in the data structure; default value
+of 1 (i.e. each variable is expected to be a scalar value)}
 }
 \value{
 a list of `csm_data_structure` objects
@@ -25,6 +28,9 @@ Create a cropping systems model (CSM) data structure
 
 # Create variables:
 wth_variables <- c(
+  csm_create_variable("time",
+                      "time of observation",
+                      "days"),
   csm_create_variable("Tair",
                       "air temperature",
                       "Celsius"),
@@ -35,6 +41,7 @@ wth_variables <- c(
 # Create weather data structure:
 weather <- csm_create_data_structure("weather",
                                      "weather data",
-                                     wth_variables)
+                                     wth_variables,
+                                     n_dim = 2)
 
 }

@@ -115,8 +115,8 @@ sp_state <- csmbuilder::csm_create_state(
                  "cumulative vernalization"),
   units = c("physiological days",
             "vernalization days"),
-  expression(~fv*csmbuilder::csm_mod_arr(Tair, ko, H, E, To),
-             ~csmbuilder::csm_mod_arr(Tair, kv, Hv, Ev, Vo)))
+  expression(~fv*csmbuilder::csm_mod_arr(Tair_t, ko, H, E, To),
+             ~csmbuilder::csm_mod_arr(Tair_t, kv, Hv, Ev, Vo)))
 
 # Define parameters
 sp_parameters <- csmbuilder::csm_create_parameter(
@@ -138,20 +138,24 @@ sp_parameters <- csmbuilder::csm_create_parameter(
             "vernalization days"))
 
 # Define weather inputs
-sp_wth_inp <- csmbuilder::csm_create_transform(
+sp_wth_inp <- csmbuilder::csm_create_variable(
   c("wtime", "Tair"),
   definition = c("time of weather observation",
                  "air temperature"),
-  units = c("days after planting",
-            "degrees Celcius"),
-  equation = c(~wth[,1],
-               ~csmbuilder::csm_get_at_t(wth[,2], wtime, t, "linear")))
+  units = c("days after planting", "degrees Celsius"))
 
 sp_wth <- csmbuilder::csm_create_data_structure(
   name = "wth",
   definition = "weather data",
-  variables = sp_wth_inp
+  variables = c(sp_wth_inp),
+  n_dim = 2
 )
+
+sp_wth_t <- csmbuilder::csm_create_transform(
+  "Tair_t",
+  definition = "air temperature at t",
+  units = "degrees Celsius",
+  equation = ~csmbuilder::csm_get_at_t(Tair, wtime, t, "linear"))
 
 # Define intermediate factors
 sp_factors <- csmbuilder::csm_create_transform(
@@ -167,6 +171,7 @@ pheno_vrn_model <-
     state = sp_state,
     parms = sp_parameters,
     wth = sp_wth,
+    wth_t = sp_wth_t,
     intermediate_factors = sp_factors)
 
 # Create function for calculating rates

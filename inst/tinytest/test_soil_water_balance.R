@@ -189,7 +189,7 @@ sw_state <- csmbuilder::csm_create_state(
   "sw",
   definition = "soil water",
   units = "mm",
-  expression(~P*fi-ETo*Ke*fe))
+  expression(~P_t*fi-ETo_t*Ke*fe))
 
 # Define parameters
 sw_parameters <- csmbuilder::csm_create_parameter(
@@ -199,49 +199,43 @@ sw_parameters <- csmbuilder::csm_create_parameter(
 
 # Define soil inputs
 sw_soil_vars <- c(
-  csmbuilder::csm_create_transform(
+  csmbuilder::csm_create_variable(
     "sw_fc",
     definition = "soil water at field capacity",
-    units = "mm",
-    equation = ~soil["sw_fc"]
-  ),
-  csmbuilder::csm_create_transform(
+    units = "mm"),
+
+  csmbuilder::csm_create_variable(
     "sw_pwp",
     definition = "soil water at permanent wilting point",
-    units = "mm",
-    equation = ~soil["sw_pwp"]
-  ),
-  csmbuilder::csm_create_transform(
+    units = "mm"),
+
+  csmbuilder::csm_create_variable(
     "sw_rew",
     definition = "soil water at limit of readily extractable water",
-    units = "mm",
-    equation = ~soil["sw_rew"]
-  ),
-  csmbuilder::csm_create_transform(
+    units = "mm"),
+
+  csmbuilder::csm_create_variable(
     "sw_tew",
     definition = "soil water at limit of total extractable water",
-    units = "mm",
-    equation = ~soil["sw_tew"]
-  )
+    units = "mm")
 )
 
 # Define weather variables
 sw_wth_vars <- c(
-  csmbuilder::csm_create_transform(
+  csmbuilder::csm_create_variable(
     "wtime",
     definition = "time of observation",
-    units = "days after planting",
-    equation = ~wth[,"time"]),
-  csmbuilder::csm_create_transform(
+    units = "days after planting"),
+
+  csmbuilder::csm_create_variable(
     "ETo",
     definition = "reference evapotranspiration",
-    units = "mm",
-    equation = ~csm_get_at_t(wth[,"ETo"], wtime, t, "linear")),
-  csmbuilder::csm_create_transform(
+    units = "mm"),
+
+  csmbuilder::csm_create_variable(
     "P",
     definition = "precipitation",
-    units = "mm",
-    equation = ~csm_get_at_t(wth[,"P"], wtime, t, "linear"))
+    units = "mm")
 )
 
 # Define input data structures
@@ -254,8 +248,23 @@ sw_inputs <- c(
   csmbuilder::csm_create_data_structure(
     "wth_data",
     definition = "weather data",
-    variables = sw_wth_vars
+    variables = sw_wth_vars,
+    n_dim = 2
   )
+)
+
+sw_wth_t <- c(
+  csmbuilder::csm_create_transform(
+    "ETo_t",
+    definition = "reference evapotranspiration at t",
+    units = "mm",
+    equation = ~csm_get_at_t(ETo, wtime, t, "linear")),
+
+  csmbuilder::csm_create_transform(
+    "P_t",
+    definition = "precipitation at t",
+    units = "mm",
+    equation = ~csm_get_at_t(P, wtime, t, "linear"))
 )
 
 # Define intermediate factors
@@ -277,7 +286,8 @@ sw_model <-
   csmbuilder::csm_create_model(sw_state,
                                  sw_parameters,
                                  sw_factors,
-                                 sw_inputs)
+                                 sw_inputs,
+                                 sw_wth_t)
 
 # Create function for calculating rates
 sw_dydt <-
